@@ -1,0 +1,38 @@
+
+body {
+  font-family: 'Sarabun', sans-serif;
+  background-color: #fffbe6;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #f9e79f;
+  padding: 20px;
+  border-right: 2px solid #d4ac0d;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  flex: 1;
+}
+
+.product-card {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+.product-card img {
+  width: 100%;
+  height: auto;
+}
