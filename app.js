@@ -1,5 +1,5 @@
 const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhYnhwc3d4c2Fxemx1YnpxYW95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1MjI4MjksImV4cCI6MjA3MjA5ODgyOX0.dPf0Ba4ahiVy9lTjAU3QrM7YF6EV-48xsdUhgVI_Ou4";
+const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 document.getElementById("add-form").addEventListener("submit", async (e) => {
