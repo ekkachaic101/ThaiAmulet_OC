@@ -1,70 +1,39 @@
-// app.js
-const { createClient } = supabase;
+const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhYnhwc3d4c2Fxemx1YnpxYW95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1MjI4MjksImV4cCI6MjA3MjA5ODgyOX0.dPf0Ba4ahiVy9lTjAU3QrM7YF6EV-48xsdUhgVI_Ou4";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ใช้ค่า Project URL + anon key ของคุณ
-const SUPABASE_URL = "https://srzqmhgdaedfoyakqmpg.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub3..."
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+document.getElementById("add-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-// ฟังก์ชันเพิ่มพระเครื่องพร้อมอัปโหลดรูป 4 รูป
-async function uploadImage(file) {
-  if (!file) return null;
-  const fileName = `${Date.now()}_${file.name}`;
-  const { error } = await supabaseClient.storage
-    .from("amulet-images")       // Bucket ที่คุณสร้าง
-    .upload(fileName, file);
-  if (error) {
-    console.error("Upload Error:", error);
-    return null;
-  }
-  const { data: { publicUrl } } = supabaseClient.storage
-    .from("amulet-images")
-    .getPublicUrl(fileName);
-  return publicUrl;
-}
+  const name = document.getElementById("name").value;
+  const price = document.getElementById("price").value;
+  const description = document.getElementById("description").value;
 
-async function addAmulet() {
-  const name = document.getElementById("name").value.trim();
-  const price = document.getElementById("price").value.trim();
-  const description = document.getElementById("description").value.trim();
-
-  const files = [
-    document.getElementById("image1").files[0],
-    document.getElementById("image2").files[0],
-    document.getElementById("image3").files[0],
-    document.getElementById("image4").files[0]
-  ];
-
-  if (!name || !price || !files[0]) {
-    alert("กรุณากรอกชื่อพระ, ราคา และเลือกรูปภาพอย่างน้อย 1 รูป");
-    return;
-  }
-
-  try {
-    const image_urls = [];
-    for (let i = 0; i < files.length; i++) {
-      if (files[i]) {
-        const url = await uploadImage(files[i]);
-        if (url) image_urls.push(url);
+  const images = [];
+  for (let i = 1; i <= 4; i++) {
+    const file = document.getElementById(`image${i}`).files[0];
+    if (file) {
+      const { data, error } = await supabase.storage
+        .from("amulet_images")
+        .upload(`public/${Date.now()}-${file.name}`, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+      if (error) {
+        alert(`❌ อัปโหลดรูปภาพ ${i} ล้มเหลว: ${error.message}`);
+        return;
       }
+      images.push(data.path);
     }
-
-    const { error } = await supabaseClient.from("amulets").insert([{
-      name,
-      price,
-      description,
-      image_url1: image_urls[0] || null,
-      image_url2: image_urls[1] || null,
-      image_url3: image_urls[2] || null,
-      image_url4: image_urls[3] || null
-    }]);
-
-    if (error) throw error;
-    alert("✅ บันทึกสำเร็จแล้ว!");
-    document.getElementById("add-form").reset();
-
-  } catch (err) {
-    console.error(err);
-    alert("❌ เกิดข้อผิดพลาด: " + err.message);
   }
-}
+
+  const { error } = await supabase.from("amulets").insert([
+    { name, price, description, image_urls: images },
+  ]);
+  if (error) {
+    alert(`❌ บันทึกข้อมูลล้มเหลว: ${error.message}`);
+  } else {
+    alert("✅ บันทึกข้อมูลสำเร็จ!");
+    document.getElementById("add-form").reset();
+  }
+});
