@@ -1,7 +1,9 @@
 // Supabase Client (v2)
 const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2";
-const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ตัวนี้ต้องใช้ตัวเล็ก supabase.createClient
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ฟังก์ชัน upload รูปไป bucket
 async function uploadImage(file) {
