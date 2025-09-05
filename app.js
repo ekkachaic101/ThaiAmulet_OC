@@ -1,15 +1,17 @@
-// เชื่อมต่อ Supabase
+// Supabase Client (v2)
 const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co";
-const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2"; // publishable key
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2";
+const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ฟังก์ชันอัปโหลดไฟล์รูปไป Storage
+// ฟังก์ชัน upload รูปไป bucket
 async function uploadImage(file) {
   if (!file) return null;
 
   const fileName = `public/${Date.now()}-${file.name}`;
+  console.log("Uploading file:", file.name);
+
   const { data, error } = await supabase.storage
-    .from("amulet-images") // bucket ที่สร้าง
+    .from("amulet-images")
     .upload(fileName, file, { upsert: true });
 
   if (error) {
@@ -17,15 +19,15 @@ async function uploadImage(file) {
     return null;
   }
 
-  // ดึง public URL
   const { data: publicData } = supabase.storage
     .from("amulet-images")
     .getPublicUrl(fileName);
 
+  console.log("Uploaded URL:", publicData.publicUrl);
   return publicData.publicUrl;
 }
 
-// ฟังก์ชันเพิ่มพระเครื่อง
+// ฟังก์ชัน submit form
 document.getElementById("add-form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -47,14 +49,16 @@ document.getElementById("add-form").addEventListener("submit", async (e) => {
 
   try {
     const image_urls = [];
+
     for (let i = 0; i < files.length; i++) {
       if (files[i]) {
         const url = await uploadImage(files[i]);
-        if (url) image_urls.push(url);
+        console.log(`Image ${i + 1} URL:`, url);
+        image_urls.push(url);
       }
     }
 
-    console.log("Data to insert:", { name, price, description, image_urls });
+    console.log("Ready to insert:", { name, price, description, image_urls });
 
     const { error } = await supabase.from("amulets").insert([
       {
@@ -71,6 +75,8 @@ document.getElementById("add-form").addEventListener("submit", async (e) => {
     if (error) throw error;
 
     alert("✅ บันทึกสำเร็จแล้ว!");
+    console.log("Insert successful");
+
     document.getElementById("add-form").reset();
 
   } catch (err) {
