@@ -1,11 +1,9 @@
 
-// ✅ เชื่อมต่อ Supabase
 const supabase = createClient(
   'https://your-project-id.supabase.co',
   'public-anon-key'
 );
 
-// ✅ โหลดรายการพระเครื่อง
 async function loadAmulets() {
   const { data, error } = await supabase.from('amulets').select('*');
   if (error) {
@@ -29,7 +27,6 @@ async function loadAmulets() {
   });
 }
 
-// ✅ เพิ่มพระเครื่อง
 async function addAmulet() {
   const name = document.getElementById('name').value;
   const image_url = document.getElementById('image_url').value;
@@ -50,7 +47,6 @@ async function addAmulet() {
   }
 }
 
-// ✅ ลบพระเครื่อง
 async function deleteAmulet(id) {
   const confirmDelete = confirm('คุณต้องการลบพระเครื่องนี้ใช่หรือไม่?');
   if (!confirmDelete) return;
@@ -65,7 +61,6 @@ async function deleteAmulet(id) {
   }
 }
 
-// ✅ แก้ไขพระเครื่อง
 async function editAmulet(id) {
   const newName = prompt('ชื่อพระใหม่:');
   const newPrice = prompt('ราคาที่แก้ไข:');
@@ -86,10 +81,8 @@ async function editAmulet(id) {
   }
 }
 
-// ✅ แสดงฟอร์มเพิ่มพระ
 function showAddForm() {
   document.getElementById('add-form').style.display = 'block';
 }
 
-// ✅ โหลดข้อมูลเมื่อเปิดหน้าเว็บ
 window.onload = loadAmulets;

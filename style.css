@@ -6,6 +6,26 @@ body {
   padding: 0;
 }
 
+.navbar {
+  background-color: #f5deb3;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar li a {
+  text-decoration: none;
+  color: #8b4513;
+  font-weight: bold;
+}
+
 .container {
   display: flex;
   flex-direction: row;

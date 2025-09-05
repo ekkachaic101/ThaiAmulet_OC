@@ -1,11 +1,24 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <title>ThaiAmulet_OC</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
 </head>
 <body>
+  <nav class="navbar">
+    <ul>
+      <li><a href="#">หน้าแรก</a></li>
+      <li><a href="#">รายการพระเครื่อง</a></li>
+      <li><a href="#" onclick="showAddForm()">➕ เพิ่มพระเครื่อง</a></li>
+      <li><a href="#">จัดการข้อมูล</a></li>
+      <li><a href="#">ระบบแชท</a></li>
+      <li><a href="#">ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
   <div class="container">
     <aside class="sidebar">
       <h2>สถิติเว็บไซต์</h2>
@@ -17,10 +30,6 @@
       </ul>
     </aside>
 
-    <!-- ปุ่มเพิ่มพระ -->
-    <button onclick="showAddForm()">➕ เพิ่มพระเครื่อง</button>
-
-    <!-- ฟอร์มเพิ่มพระ -->
     <div id="add-form" style="display:none; margin-top: 20px;">
       <input type="text" id="name" placeholder="ชื่อพระ">
       <input type="text" id="image_url" placeholder="ลิงก์รูปภาพ">
@@ -30,13 +39,10 @@
     </div>
 
     <main class="product-grid" id="product-grid">
-      <!-- รายการพระจะถูกแสดงที่นี่ด้วย JS -->
     </main>
   </div>
 
-  <!-- ✅ โหลด Supabase CDN ให้ถูกต้อง -->
-  https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2
-  <!-- ✅ โหลดไฟล์ JavaScript ของคุณ -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js"></script>
 </body>
 </html>
