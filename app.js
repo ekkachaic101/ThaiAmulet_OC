@@ -1,4 +1,3 @@
-
 const supabase = createClient(
   'https://your-project-id.supabase.co',
   'public-anon-key'
@@ -95,4 +94,8 @@ function showAddForm() {
   document.getElementById('add-form').style.display = 'block';
 }
 
-window.onload = loadAmulets;
+window.onload = function() {
+  if (document.getElementById('product-grid')) {
+    loadAmulets();
+  }
+};

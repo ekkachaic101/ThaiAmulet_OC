@@ -3,7 +3,7 @@
 <html lang='th'>
 <head>
   <meta charset='UTF-8'>
-  <title>หน้าแรก - ThaiAmulet_OC</title>
+  <title>เพิ่มพระเครื่อง - ThaiAmulet_OC</title>
   <link rel='stylesheet' href='style.css'>
   <link href='https://fonts.googleapis.com/css2?family=Sarabun&display=swap' rel='stylesheet'>
 </head>
@@ -27,9 +27,15 @@
         <li><a href='#'>🚪 ออกจากระบบ</a></li>
       </ul>
     </aside>
-    <main class='product-grid'>
-      <h2 style='padding:20px;'>ยินดีต้อนรับสู่ระบบจัดการพระเครื่อง ThaiAmulet_OC</h2>
-    </main>
+    <div id='add-form'>
+      <input type='text' id='name' placeholder='ชื่อพระ'>
+      <input type='text' id='image_url' placeholder='ลิงก์รูปภาพ'>
+      <input type='text' id='price' placeholder='ราคา'>
+      <input type='text' id='description' placeholder='คำอธิบาย'>
+      <button onclick='addAmulet()'>บันทึก</button>
+    </div>
   </div>
+  <script src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'></script>
+  <script src='app.js'></script>
 </body>
 </html>
