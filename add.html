@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
-<html lang='th'>
+<html lang="th">
 <head>
-  <meta charset='UTF-8'>
+  <meta charset="UTF-8">
   <title>เพิ่มพระเครื่อง - ThaiAmulet_OC</title>
-  <link rel='stylesheet' href='style.css'>
-  <link href='https://fonts.googleapis.com/css2?family=Sarabun&display=swap' rel='stylesheet'>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
 </head>
 <body>
   <nav class='navbar'>
@@ -17,6 +16,7 @@
       <li><a href='#'>🚪 ออกจากระบบ</a></li>
     </ul>
   </nav>
+
   <div class='container'>
     <aside class='sidebar'>
       <h2>เมนูจัดการ</h2>
@@ -27,14 +27,23 @@
         <li><a href='#'>🚪 ออกจากระบบ</a></li>
       </ul>
     </aside>
+
     <div id='add-form'>
-      <input type='text' id='name' placeholder='ชื่อพระ'>
-      <input type='text' id='image_url' placeholder='ลิงก์รูปภาพ'>
-      <input type='text' id='price' placeholder='ราคา'>
-      <input type='text' id='description' placeholder='คำอธิบาย'>
+      <input type='text' id='name' placeholder='ชื่อพระ' required><br><br>
+      <input type='number' id='price' placeholder='ราคา' required><br><br>
+      <textarea id='description' placeholder='คำอธิบาย'></textarea><br><br>
+      
+      <!-- อัปโหลดรูปพระ 4 รูป -->
+      <label>เลือกรูปภาพ 4 รูป:</label><br>
+      <input type='file' id='image1' accept='image/*' required><br>
+      <input type='file' id='image2' accept='image/*'><br>
+      <input type='file' id='image3' accept='image/*'><br>
+      <input type='file' id='image4' accept='image/*'><br><br>
+      
       <button onclick='addAmulet()'>บันทึก</button>
     </div>
   </div>
+
   <script src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'></script>
   <script src='app.js'></script>
 </body>

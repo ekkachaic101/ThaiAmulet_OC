@@ -1,101 +1,70 @@
-const supabase = createClient(
-  'https://your-project-id.supabase.co',
-  'public-anon-key'
-);
+// app.js
+const { createClient } = supabase;
 
-async function loadAmulets() {
-  const { data, error } = await supabase.from('amulets').select('*');
+// ใช้ค่า Project URL + anon key ของคุณ
+const SUPABASE_URL = "https://srzqmhgdaedfoyakqmpg.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub3..."
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ฟังก์ชันเพิ่มพระเครื่องพร้อมอัปโหลดรูป 4 รูป
+async function uploadImage(file) {
+  if (!file) return null;
+  const fileName = `${Date.now()}_${file.name}`;
+  const { error } = await supabaseClient.storage
+    .from("amulet-images")       // Bucket ที่คุณสร้าง
+    .upload(fileName, file);
   if (error) {
-    console.error('เกิดข้อผิดพลาดในการโหลด:', error);
-    return;
+    console.error("Upload Error:", error);
+    return null;
   }
-  const grid = document.getElementById('product-grid');
-  grid.innerHTML = '';
-  data.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    card.innerHTML = `
-      <img src="${item.image_url}" alt="${item.name}" />
-      <h3>${item.name}</h3>
-      <p>${item.description}</p>
-      <p><strong>ราคา:</strong> ${item.price} บาท</p>
-      <button onclick="editAmulet(${item.id})">✏️ แก้ไข</button>
-      <button onclick="deleteAmulet(${item.id})">🗑️ ลบ</button>
-    `;
-    grid.appendChild(card);
-  });
+  const { data: { publicUrl } } = supabaseClient.storage
+    .from("amulet-images")
+    .getPublicUrl(fileName);
+  return publicUrl;
 }
 
 async function addAmulet() {
-  const name = document.getElementById('name').value.trim();
-  const image_url = document.getElementById('image_url').value.trim();
-  const price = document.getElementById('price').value.trim();
-  const description = document.getElementById('description').value.trim();
+  const name = document.getElementById("name").value.trim();
+  const price = document.getElementById("price").value.trim();
+  const description = document.getElementById("description").value.trim();
 
-  if (!name || !price) {
-    alert('กรุณากรอกชื่อพระและราคาก่อนเพิ่มข้อมูล');
+  const files = [
+    document.getElementById("image1").files[0],
+    document.getElementById("image2").files[0],
+    document.getElementById("image3").files[0],
+    document.getElementById("image4").files[0]
+  ];
+
+  if (!name || !price || !files[0]) {
+    alert("กรุณากรอกชื่อพระ, ราคา และเลือกรูปภาพอย่างน้อย 1 รูป");
     return;
   }
 
-  const { error } = await supabase.from('amulets').insert([
-    { name, image_url, price, description }
-  ]);
+  try {
+    const image_urls = [];
+    for (let i = 0; i < files.length; i++) {
+      if (files[i]) {
+        const url = await uploadImage(files[i]);
+        if (url) image_urls.push(url);
+      }
+    }
 
-  if (error) {
-    alert('เกิดข้อผิดพลาดในการเพิ่มข้อมูล');
-    console.error(error);
-  } else {
-    alert('เพิ่มพระเครื่องเรียบร้อยแล้ว');
-    loadAmulets();
-    document.getElementById('add-form').style.display = 'none';
+    const { error } = await supabaseClient.from("amulets").insert([{
+      name,
+      price,
+      description,
+      image_url1: image_urls[0] || null,
+      image_url2: image_urls[1] || null,
+      image_url3: image_urls[2] || null,
+      image_url4: image_urls[3] || null
+    }]);
+
+    if (error) throw error;
+    alert("✅ บันทึกสำเร็จแล้ว!");
+    document.getElementById("add-form").reset();
+
+  } catch (err) {
+    console.error(err);
+    alert("❌ เกิดข้อผิดพลาด: " + err.message);
   }
 }
-
-async function deleteAmulet(id) {
-  const confirmDelete = confirm('คุณต้องการลบพระเครื่องนี้ใช่หรือไม่?');
-  if (!confirmDelete) return;
-
-  const { error } = await supabase.from('amulets').delete().eq('id', id);
-  if (error) {
-    alert('เกิดข้อผิดพลาดในการลบ');
-    console.error(error);
-  } else {
-    alert('ลบเรียบร้อยแล้ว');
-    loadAmulets();
-  }
-}
-
-async function editAmulet(id) {
-  const newName = prompt('ชื่อพระใหม่:');
-  const newPrice = prompt('ราคาที่แก้ไข:');
-  const newDescription = prompt('คำอธิบายใหม่:');
-
-  if (!newName || !newPrice) {
-    alert('กรุณากรอกชื่อพระและราคาก่อนแก้ไขข้อมูล');
-    return;
-  }
-
-  const { error } = await supabase.from('amulets').update({
-    name: newName.trim(),
-    price: newPrice.trim(),
-    description: newDescription ? newDescription.trim() : ''
-  }).eq('id', id);
-
-  if (error) {
-    alert('เกิดข้อผิดพลาดในการแก้ไข');
-    console.error(error);
-  } else {
-    alert('แก้ไขข้อมูลเรียบร้อยแล้ว');
-    loadAmulets();
-  }
-}
-
-function showAddForm() {
-  document.getElementById('add-form').style.display = 'block';
-}
-
-window.onload = function() {
-  if (document.getElementById('product-grid')) {
-    loadAmulets();
-  }
-};
