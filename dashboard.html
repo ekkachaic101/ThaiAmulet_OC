@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - ThaiAmulet_OC</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <ul>
+      <li><a href="#">หน้าแรก</a></li>
+      <li><a href="#" onclick="showAddForm()">➕ เพิ่มพระเครื่อง</a></li>
+      <li><a href="#" onclick="loadAmulets()">📋 รายการทั้งหมด</a></li>
+      <li><a href="#">📊 สถิติ</a></li>
+      <li><a href="#">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h2>เมนูจัดการ</h2>
+      <ul>
+        <li><a href="#" onclick="showAddForm()">➕ เพิ่มพระ</a></li>
+        <li><a href="#" onclick="loadAmulets()">📋 รายการทั้งหมด</a></li>
+        <li><a href="#">📊 สถิติ</a></li>
+        <li><a href="#">🚪 ออกจากระบบ</a></li>
+      </ul>
+    </aside>
+
+    <div id="add-form" style="display:none; margin-top: 20px;">
+      <input type="text" id="name" placeholder="ชื่อพระ">
+      <input type="text" id="image_url" placeholder="ลิงก์รูปภาพ">
+      <input type="text" id="price" placeholder="ราคา">
+      <input type="text" id="description" placeholder="คำอธิบาย">
+      <button onclick="addAmulet()">บันทึก</button>
+    </div>
+
+    <main class="product-grid" id="product-grid">
+      <!-- รายการพระเครื่องจะแสดงที่นี่ -->
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>

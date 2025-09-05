@@ -28,10 +28,15 @@ async function loadAmulets() {
 }
 
 async function addAmulet() {
-  const name = document.getElementById('name').value;
-  const image_url = document.getElementById('image_url').value;
-  const price = document.getElementById('price').value;
-  const description = document.getElementById('description').value;
+  const name = document.getElementById('name').value.trim();
+  const image_url = document.getElementById('image_url').value.trim();
+  const price = document.getElementById('price').value.trim();
+  const description = document.getElementById('description').value.trim();
+
+  if (!name || !price) {
+    alert('กรุณากรอกชื่อพระและราคาก่อนเพิ่มข้อมูล');
+    return;
+  }
 
   const { error } = await supabase.from('amulets').insert([
     { name, image_url, price, description }
@@ -66,10 +71,15 @@ async function editAmulet(id) {
   const newPrice = prompt('ราคาที่แก้ไข:');
   const newDescription = prompt('คำอธิบายใหม่:');
 
+  if (!newName || !newPrice) {
+    alert('กรุณากรอกชื่อพระและราคาก่อนแก้ไขข้อมูล');
+    return;
+  }
+
   const { error } = await supabase.from('amulets').update({
-    name: newName,
-    price: newPrice,
-    description: newDescription
+    name: newName.trim(),
+    price: newPrice.trim(),
+    description: newDescription ? newDescription.trim() : ''
   }).eq('id', id);
 
   if (error) {
