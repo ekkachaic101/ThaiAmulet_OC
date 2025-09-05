@@ -3,13 +3,13 @@ const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2"; // publishable key
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ฟังก์ชันอัปโหลดไฟล์รูป
+// ฟังก์ชันอัปโหลดไฟล์รูปไป Storage
 async function uploadImage(file) {
   if (!file) return null;
 
   const fileName = `public/${Date.now()}-${file.name}`;
   const { data, error } = await supabase.storage
-    .from("amulet_images") // bucket ที่สร้าง
+    .from("amulet-images") // bucket ที่สร้าง
     .upload(fileName, file, { upsert: true });
 
   if (error) {
@@ -17,8 +17,9 @@ async function uploadImage(file) {
     return null;
   }
 
+  // ดึง public URL
   const { data: publicData } = supabase.storage
-    .from("amulet_images")
+    .from("amulet-images")
     .getPublicUrl(fileName);
 
   return publicData.publicUrl;
