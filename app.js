@@ -1,7 +1,6 @@
-
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co"
+const SUPABASE_URL = "https://srzqmhgdaedfoyakqmpg.supabase.co"
 const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2"
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
@@ -32,7 +31,6 @@ async function uploadImage(file) {
   return publicData.publicUrl
 }
 
-// เมื่อ submit ฟอร์ม
 document.getElementById("add-form").addEventListener("submit", async (e) => {
   e.preventDefault()
 
