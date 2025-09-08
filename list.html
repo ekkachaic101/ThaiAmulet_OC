@@ -1,30 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <title>รายการพระเครื่อง - ThaiAmulet_OC</title>
   <link rel="stylesheet" href="style.css">
+  <script type="module" src="list.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
-  <style>
-    .product-card {
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin: 10px;
-      display: inline-block;
-      vertical-align: top;
-      width: 220px;
-      text-align: center;
-    }
-    .product-card img {
-      width: 200px;
-      height: 200px;
-      object-fit: cover;
-      margin-bottom: 10px;
-    }
-    button {
-      margin: 5px;
-    }
-  </style>
 </head>
 <body>
   <nav class="navbar">
@@ -48,13 +30,10 @@
       </ul>
     </aside>
 
-    <main id="product-grid">
-      <h2 style="padding:20px;">รายการพระเครื่องทั้งหมด</h2>
+    <main class="product-grid">
+      <h2>รายการพระเครื่องทั้งหมด</h2>
+      <div id="amulet-list" class="amulet-list"></div>
     </main>
   </div>
-
-  <!-- โหลด Supabase JS v2 ก่อน list.js -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="list.js"></script>
 </body>
 </html>
