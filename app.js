@@ -1,9 +1,11 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
 // Supabase Client (v2)
 const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2";
 
-// ใช้ตัวเล็ก supabase.createClient
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ✅ สร้าง client จาก createClient
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ฟังก์ชัน upload รูปไป bucket
 async function uploadImage(file) {
@@ -86,4 +88,3 @@ document.getElementById("add-form").addEventListener("submit", async (e) => {
     alert("❌ เกิดข้อผิดพลาด: " + err.message);
   }
 });
-
