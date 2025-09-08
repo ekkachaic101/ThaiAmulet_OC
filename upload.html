@@ -1,121 +1,54 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <title>อัปโหลดพระเครื่อง</title>
-  <style>
-    body {
-      font-family: 'Sarabun', sans-serif;
-      background-color: #fff8dc;
-      color: #5c3a00;
-      padding: 40px;
-      max-width: 600px;
-      margin: auto;
-      border: 2px solid #d4af37;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co"
+const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2"
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+const form = document.getElementById('uploadForm')
+const status = document.getElementById('status')
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault()
+  status.textContent = '⏳ กำลังอัปโหลด...'
+
+  const name = form.name.value
+  const price = parseFloat(form.price.value)
+  const file = form.image.files[0]
+  const image_code = generateRandomCode()
+
+  if (!file || !name || isNaN(price)) {
+    status.textContent = '❌ กรุณากรอกข้อมูลให้ครบ'
+    return
+  }
+
+  try {
+    const { error: uploadError } = await supabase.storage
+      .from('amulet-images')
+      .upload(`${image_code}.jpg`, file)
+
+    if (uploadError) {
+      status.textContent = '❌ อัปโหลดภาพไม่สำเร็จ: ' + uploadError.message
+      return
     }
-    h1 {
-      text-align: center;
-      color: #d4af37;
+
+    const { error: insertError } = await supabase
+      .from('amulets') // ตรวจสอบว่า table นี้มีอยู่ใน Supabase
+      .insert([{ name, price, image_code }])
+
+    if (insertError) {
+      status.textContent = '❌ บันทึกข้อมูลไม่สำเร็จ: ' + insertError.message
+      return
     }
-    label {
-      display: block;
-      margin-top: 20px;
-    }
-    input[type="text"], input[type="number"], input[type="file"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #d4af37;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #status {
-      margin-top: 20px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <h1>อัปโหลดพระเครื่อง</h1>
-  <form id="uploadForm">
-    <label>ชื่อพระเครื่อง:</label>
-    <input type="text" name="name" required />
 
-    <label>ราคา:</label>
-    <input type="number" name="price" required />
+    const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/amulet-images/${image_code}.jpg`
+    status.innerHTML = `✅ อัปโหลดสำเร็จ!<br>รหัสภาพ: ${image_code}<br><img src="${imageUrl}" style="max-width:300px;">`
+    form.reset()
+  } catch (err) {
+    status.textContent = '❌ เกิดข้อผิดพลาด: ' + err.message
+  }
+})
 
-    <label>ภาพพระเครื่อง:</label>
-    <input type="file" name="image" accept="image/*" required />
-
-    <button type="submit">บันทึก</button>
-  </form>
-  <div id="status"></div>
-
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-    const supabase = createClient(
-      'https://<your-project>.supabase.co',
-      '<your-anon-key>'
-    )
-
-    const form = document.getElementById('uploadForm')
-    const status = document.getElementById('status')
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault()
-      status.textContent = '⏳ กำลังอัปโหลด...'
-
-      const name = form.name.value
-      const price = parseFloat(form.price.value)
-      const file = form.image.files[0]
-      const image_code = generateRandomCode()
-
-      if (!file || !name || isNaN(price)) {
-        status.textContent = '❌ กรุณากรอกข้อมูลให้ครบ'
-        return
-      }
-
-      try {
-        const { error: uploadError } = await supabase.storage
-          .from('amulet-images')
-          .upload(`${image_code}.jpg`, file)
-
-        if (uploadError) {
-          status.textContent = '❌ อัปโหลดภาพไม่สำเร็จ: ' + uploadError.message
-          return
-        }
-
-        const { error: insertError } = await supabase
-          .from('amulet_images')
-          .insert([{ name, price, image_code }])
-
-        if (insertError) {
-          status.textContent = '❌ บันทึกข้อมูลไม่สำเร็จ: ' + insertError.message
-          return
-        }
-
-        status.textContent = `✅ อัปโหลดสำเร็จ! รหัสภาพ: ${image_code}`
-        form.reset()
-      } catch (err) {
-        status.textContent = '❌ เกิดข้อผิดพลาด: ' + err.message
-      }
-    })
-
-    function generateRandomCode() {
-      return Math.random().toString(36).substring(2, 8).toUpperCase()
-    }
-  </script>
-</body>
-</html>
+function generateRandomCode() {
+  return Math.random().toString(36).substring(2, 8).toUpperCase()
+}
