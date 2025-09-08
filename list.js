@@ -12,30 +12,54 @@ async function loadAmulets() {
   }
 
   const container = document.getElementById("product-grid");
+  const table = document.createElement("table");
+  table.border = "1";
+  table.style.width = "100%";
+  table.style.borderCollapse = "collapse";
+
+  table.innerHTML = `
+    <thead>
+      <tr style="background-color:#f7e49b;">
+        <th>ชื่อพระ</th>
+        <th>ภาพด้านหน้า</th>
+        <th>ภาพด้านหลัง</th>
+        <th>ราคา</th>
+        <th>คำอธิบาย</th>
+        <th>จัดการ</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+
+  const tbody = table.querySelector("tbody");
+
+  if (data.length === 0) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td colspan="6" style="text-align:center; padding:20px;">ไม่มีข้อมูลพระเครื่องในระบบ</td>`;
+    tbody.appendChild(row);
+  }
+
   data.forEach((amulet) => {
-    const card = document.createElement("div");
-    card.className = "product-card";
+    const row = document.createElement("tr");
 
-    // รวมภาพทั้งหมด
-    const images = [amulet.image_url1, amulet.image_url2, amulet.image_url3, amulet.image_url4]
-      .filter(url => url)
-      .map(url => `<img src="${url}" alt="${amulet.name}">`)
-      .join("");
-
-    card.innerHTML = `
-      ${images}
-      <h3>${amulet.name}</h3>
-      <p>ราคา: ${amulet.price}</p>
-      <p>${amulet.description}</p>
-      <button onclick="editAmulet('${amulet.id}')">✏️ แก้ไข</button>
-      <button onclick="deleteAmulet('${amulet.id}')">🗑️ ลบ</button>
+    row.innerHTML = `
+      <td>${amulet.name}</td>
+      <td><img src="${amulet.image_url1}" width="100"></td>
+      <td><img src="${amulet.image_url2}" width="100"></td>
+      <td>${amulet.price}</td>
+      <td>${amulet.description}</td>
+      <td>
+        <button onclick="editAmulet('${amulet.id}')">✏️</button>
+        <button onclick="deleteAmulet('${amulet.id}')">🗑️</button>
+      </td>
     `;
 
-    container.appendChild(card);
+    tbody.appendChild(row);
   });
+
+  container.appendChild(table);
 }
 
-// ฟังก์ชันลบพระเครื่อง
 async function deleteAmulet(id) {
   if (!confirm("คุณต้องการลบพระเครื่องนี้ใช่หรือไม่?")) return;
 
@@ -49,7 +73,6 @@ async function deleteAmulet(id) {
   }
 }
 
-// ฟังก์ชันแก้ไข (นำไปหน้าแก้ไขในอนาคต)
 function editAmulet(id) {
   alert("ฟังก์ชันแก้ไขยังไม่เปิดใช้งาน");
   // location.href = `edit.html?id=${id}`;
