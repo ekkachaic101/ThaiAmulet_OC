@@ -2,49 +2,21 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>เพิ่มพระเครื่อง - ThaiAmulet_OC</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
+  <title>เพิ่มพระเครื่องใหม่</title>
 </head>
 <body>
-  <nav class="navbar">
-    <ul>
-      <li><a href="index.html">🏠 หน้าแรก</a></li>
-      <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
-      <li><a href="list.html">📋 รายการทั้งหมด</a></li>
-      <li><a href="stats.html">📊 สถิติ</a></li>
-      <li><a href="#">🚪 ออกจากระบบ</a></li>
-    </ul>
-  </nav>
-
-  <div class="container">
-    <aside class="sidebar">
-      <h2>เมนูจัดการ</h2>
-      <ul>
-        <li><a href="add.html">➕ เพิ่มพระ</a></li>
-        <li><a href="list.html">📋 รายการทั้งหมด</a></li>
-        <li><a href="stats.html">📊 สถิติ</a></li>
-        <li><a href="#">🚪 ออกจากระบบ</a></li>
-      </ul>
-    </aside>
-
-    <main class="product-grid">
-      <h2>เพิ่มพระเครื่องใหม่</h2>
-      <form id="add-form">
-        <input type="text" id="name" placeholder="ชื่อพระ" required><br><br>
-        <input type="file" id="image1" accept="image/*" required><br>
-        <input type="file" id="image2" accept="image/*"><br>
-        <input type="file" id="image3" accept="image/*"><br>
-        <input type="file" id="image4" accept="image/*"><br><br>
-        <input type="text" id="price" placeholder="ราคา" required><br><br>
-        <textarea id="description" placeholder="คำอธิบาย" required></textarea><br><br>
-        <button type="submit">บันทึก</button>
-      </form>
-    </main>
-  </div>
-
-  <!-- โหลด Supabase JS v2 ก่อน app.js -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <h1>เพิ่มพระเครื่อง</h1>
+  <form id="add-form">
+    <input type="text" id="name" placeholder="ชื่อพระ" required><br>
+    <input type="number" id="price" placeholder="ราคา" required><br>
+    <textarea id="description" placeholder="รายละเอียด"></textarea><br>
+    <input type="file" id="image1" accept="image/*"><br>
+    <input type="file" id="image2" accept="image/*"><br>
+    <input type="file" id="image3" accept="image/*"><br>
+    <input type="file" id="image4" accept="image/*"><br>
+    <button type="submit">บันทึก</button>
+  </form>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="app.js"></script>
 </body>
 </html>
