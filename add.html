@@ -1,50 +1,74 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>เพิ่มพระเครื่อง - ThaiAmulet_OC</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
+  <title>เพิ่มข้อมูลพระเครื่อง</title>
+  <style>
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background-color: #fff8dc;
+      color: #5c3a00;
+      padding: 40px;
+      max-width: 700px;
+      margin: auto;
+      border: 2px solid #d4af37;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #d4af37;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+    }
+    input[type="text"], input[type="number"], textarea, input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #d4af37;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar">
-    <ul>
-      <li><a href="index.html">🏠 หน้าแรก</a></li>
-      <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
-      <li><a href="list.html">📋 รายการทั้งหมด</a></li>
-      <li><a href="stats.html">📊 สถิติ</a></li>
-      <li><a href="#">🚪 ออกจากระบบ</a></li>
-    </ul>
-  </nav>
+  <h1>เพิ่มข้อมูลพระเครื่อง</h1>
+  <form id="add-form">
+    <label>ชื่อพระเครื่อง:</label>
+    <input type="text" id="name" required />
 
-  <div class="container">
-    <aside class="sidebar">
-      <h2>เมนูจัดการ</h2>
-      <ul>
-        <li><a href="add.html">➕ เพิ่มพระ</a></li>
-        <li><a href="list.html">📋 รายการทั้งหมด</a></li>
-        <li><a href="stats.html">📊 สถิติ</a></li>
-        <li><a href="#">🚪 ออกจากระบบ</a></li>
-      </ul>
-    </aside>
+    <label>ราคา:</label>
+    <input type="number" id="price" required />
 
-    <main class="product-grid">
-      <h2>เพิ่มพระเครื่องใหม่</h2>
-      <form id="add-form">
-        <input type="text" id="name" placeholder="ชื่อพระ" required><br><br>
-        <input type="file" id="image1" accept="image/*" required><br>
-        <input type="file" id="image2" accept="image/*"><br>
-        <input type="file" id="image3" accept="image/*"><br>
-        <input type="file" id="image4" accept="image/*"><br><br>
-        <input type="text" id="price" placeholder="ราคา" required><br><br>
-        <textarea id="description" placeholder="คำอธิบาย" required></textarea><br><br>
-        <button type="submit">บันทึก</button>
-      </form>
-    </main>
-  </div>
+    <label>รายละเอียดเพิ่มเติม:</label>
+    <textarea id="description" rows="4"></textarea>
 
-  <!-- โหลด Supabase JS v2 ก่อน app.js -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js"></script>
+    <label>ภาพด้านหน้า:</label>
+    <input type="file" id="image1" accept="image/*" required />
+
+    <label>ภาพด้านหลัง:</label>
+    <input type="file" id="image2" accept="image/*" />
+
+    <label>ภาพด้านข้าง:</label>
+    <input type="file" id="image3" accept="image/*" />
+
+    <label>ภาพอื่น ๆ:</label>
+    <input type="file" id="image4" accept="image/*" />
+
+    <button type="submit">บันทึกข้อมูล</button>
+  </form>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
