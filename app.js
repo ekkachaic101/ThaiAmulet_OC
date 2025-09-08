@@ -1,25 +1,29 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-// Supabase Client (v2)
+// Supabase Client
 const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2";
-
-// ✅ สร้าง client จาก createClient
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ฟังก์ชัน upload รูปไป bucket
+// สร้างชื่อไฟล์แบบสุ่ม
+function generateFilename(originalName) {
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(2, 8);
+  const ext = originalName.split('.').pop();
+  return `public/${timestamp}_${random}.${ext}`;
+}
+
+// อัปโหลดภาพไปยัง Supabase Storage
 async function uploadImage(file) {
   if (!file) return null;
-
-  const fileName = `public/${Date.now()}-${file.name}`;
-  console.log("Uploading file:", file.name);
+  const fileName = generateFilename(file.name);
 
   const { data, error } = await supabase.storage
     .from("amulet-images")
     .upload(fileName, file, { upsert: true });
 
   if (error) {
-    console.error("Upload error:", error);
+    console.error("Upload error:", error.message);
     return null;
   }
 
@@ -27,11 +31,10 @@ async function uploadImage(file) {
     .from("amulet-images")
     .getPublicUrl(fileName);
 
-  console.log("Uploaded URL:", publicData.publicUrl);
   return publicData.publicUrl;
 }
 
-// ฟังก์ชัน submit form
+// เมื่อ submit ฟอร์ม
 document.getElementById("add-form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -55,32 +58,25 @@ document.getElementById("add-form").addEventListener("submit", async (e) => {
     const image_urls = [];
 
     for (let i = 0; i < files.length; i++) {
-      if (files[i]) {
-        const url = await uploadImage(files[i]);
-        console.log(`Image ${i + 1} URL:`, url);
-        image_urls.push(url);
-      }
+      const url = await uploadImage(files[i]);
+      image_urls.push(url || null);
     }
-
-    console.log("Ready to insert:", { name, price, description, image_urls });
 
     const { error } = await supabase.from("amulets").insert([
       {
         name,
         price,
         description,
-        image_url1: image_urls[0] || null,
-        image_url2: image_urls[1] || null,
-        image_url3: image_urls[2] || null,
-        image_url4: image_urls[3] || null,
+        image_url1: image_urls[0],
+        image_url2: image_urls[1],
+        image_url3: image_urls[2],
+        image_url4: image_urls[3],
       },
     ]);
 
     if (error) throw error;
 
     alert("✅ บันทึกสำเร็จแล้ว!");
-    console.log("Insert successful");
-
     document.getElementById("add-form").reset();
 
   } catch (err) {
