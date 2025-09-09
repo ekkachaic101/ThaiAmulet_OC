@@ -4,6 +4,59 @@
 <head>
   <meta charset="UTF-8">
   <title>เพิ่มพระเครื่อง</title>
+  <style>
+    body {
+      font-family: 'Tahoma', sans-serif;
+      background: url('image.png') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: #4B3E2A;
+    }
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      background-color: rgba(255, 248, 220, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      color: #B8860B;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input[type="text"], textarea, input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #FFD700;
+      color: #4B3E2A;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #FFC107;
+    }
+    .preview {
+      max-width: 150px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -55,10 +108,9 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("image1").addEventListener("change", () => previewImage("image1", "preview1"))
-      document.getElementById("image2").addEventListener("change", () => previewImage("image2", "preview2"))
-      document.getElementById("image3").addEventListener("change", () => previewImage("image3", "preview3"))
-      document.getElementById("image4").addEventListener("change", () => previewImage("image4", "preview4"))
+      [1,2,3,4].forEach(i => {
+        document.getElementById(`image${i}`).addEventListener("change", () => previewImage(`image${i}`, `preview${i}`))
+      })
 
       document.getElementById("add-form").addEventListener("submit", async (e) => {
         e.preventDefault()
@@ -115,29 +167,36 @@
   </script>
 </head>
 <body>
-  <h2>เพิ่มพระเครื่อง</h2>
-  <form id="add-form">
-    <input type="text" id="name" placeholder="ชื่อพระ" required><br>
-    <input type="text" id="price" placeholder="ราคา" required><br>
-    <textarea id="description" placeholder="รายละเอียด"></textarea><br>
+  <div class="container">
+    <h2>เพิ่มพระเครื่อง</h2>
+    <form id="add-form">
+      <label>ชื่อพระ:</label>
+      <input type="text" id="name" required>
 
-    <label>ภาพที่ 1:</label><br>
-    <input type="file" id="image1" accept="image/*"><br>
-    <img id="preview1" class="preview" style="max-width:150px; margin-top:10px;"><br>
+      <label>ราคา:</label>
+      <input type="text" id="price" required>
 
-    <label>ภาพที่ 2:</label><br>
-    <input type="file" id="image2" accept="image/*"><br>
-    <img id="preview2" class="preview" style="max-width:150px; margin-top:10px;"><br>
+      <label>รายละเอียด:</label>
+      <textarea id="description" rows="4"></textarea>
 
-    <label>ภาพที่ 3:</label><br>
-    <input type="file" id="image3" accept="image/*"><br>
-    <img id="preview3" class="preview" style="max-width:150px; margin-top:10px;"><br>
+      <label>ภาพที่ 1:</label>
+      <input type="file" id="image1" accept="image/*">
+      <img id="preview1" class="preview">
 
-    <label>ภาพที่ 4:</label><br>
-    <input type="file" id="image4" accept="image/*"><br>
-    <img id="preview4" class="preview" style="max-width:150px; margin-top:10px;"><br><br>
+      <label>ภาพที่ 2:</label>
+      <input type="file" id="image2" accept="image/*">
+      <img id="preview2" class="preview">
 
-    <button type="submit">บันทึกข้อมูล</button>
-  </form>
+      <label>ภาพที่ 3:</label>
+      <input type="file" id="image3" accept="image/*">
+      <img id="preview3" class="preview">
+
+      <label>ภาพที่ 4:</label>
+      <input type="file" id="image4" accept="image/*">
+      <img id="preview4" class="preview">
+
+      <button type="submit">บันทึกข้อมูล</button>
+    </form>
+  </div>
 </body>
 </html>
