@@ -7,7 +7,8 @@
   <style>
     body {
       font-family: 'Tahoma', sans-serif;
-      background: url('image.png') no-repeat center center fixed;
+      background-color: #fff8dc;
+      background-image: url('thai-pattern.png'); /* ลายไทย (ถ้ามี) */
       background-size: cover;
       margin: 0;
       padding: 0;
@@ -64,23 +65,23 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ"
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
-    function generateFilename(originalName) {
-      const timestamp = Date.now()
-      const random = Math.random().toString(36).substring(2, 8)
-      const ext = originalName.split('.').pop()
-      return `${timestamp}_${random}.${ext}`
+    function generateCode() {
+      return Math.random().toString(36).substring(2, 8).toUpperCase()
     }
 
-    async function uploadImage(file) {
+    async function uploadImage(file, code, index) {
       if (!file) return null
-      const fileName = generateFilename(file.name)
+
+      const ext = file.name.split('.').pop()
+      const fileName = `${code}_${index}.${ext}`
 
       const { data, error } = await supabase.storage
         .from("amulet-images")
         .upload(fileName, file, { upsert: true })
 
       if (error) {
-        console.error("Upload error:", error.message)
+        console.error("❌ Upload error:", error.message)
+        alert("เกิดข้อผิดพลาดในการอัปโหลดภาพ: " + error.message)
         return null
       }
 
@@ -132,10 +133,11 @@
         }
 
         try {
+          const code = generateCode()
           const image_urls = []
 
           for (let i = 0; i < files.length; i++) {
-            const url = await uploadImage(files[i])
+            const url = await uploadImage(files[i], code, i + 1)
             image_urls.push(url || null)
           }
 
@@ -144,10 +146,7 @@
               name,
               price,
               description,
-              image_url1: image_urls[0],
-              image_url2: image_urls[1],
-              image_url3: image_urls[2],
-              image_url4: image_urls[3],
+              user_image_code: code,
               created_at: new Date().toISOString(),
             },
           ])
