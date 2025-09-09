@@ -68,6 +68,7 @@ document.getElementById("add-form").addEventListener("submit", async (e) => {
         image_url2: image_urls[1],
         image_url3: image_urls[2],
         image_url4: image_urls[3],
+        created_at: new Date().toISOString(), // ✅ บันทึกเวลา
       },
     ])
 
