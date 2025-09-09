@@ -4,6 +4,66 @@
 <head>
   <meta charset="UTF-8">
   <title>เพิ่มพระเครื่อง</title>
+  <style>
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: url('image.png') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: #4B3E2A;
+    }
+    .container {
+      max-width: 900px;
+      margin: 60px auto;
+      background-color: rgba(255, 255, 240, 0.95);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      color: #B8860B;
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 20px;
+      display: block;
+      color: #6B4F1D;
+    }
+    input[type="text"], textarea, input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #FFD700;
+      color: #4B3E2A;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      margin-top: 30px;
+      display: block;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #FFC107;
+    }
+    .preview {
+      max-width: 150px;
+      height: auto;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+  </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -11,23 +71,23 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ"
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
-    function generateFilename(originalName) {
-      const timestamp = Date.now()
-      const random = Math.random().toString(36).substring(2, 8)
-      const ext = originalName.split('.').pop()
-      return `${timestamp}_${random}.${ext}`
+    function generateCode() {
+      return Math.random().toString(36).substring(2, 8).toUpperCase()
     }
 
-    async function uploadImage(file) {
+    async function uploadImage(file, code, index) {
       if (!file) return null
-      const fileName = generateFilename(file.name)
+
+      const ext = file.name.split('.').pop()
+      const fileName = `${code}_${index}.${ext}`
 
       const { data, error } = await supabase.storage
         .from("amulet-images")
         .upload(fileName, file, { upsert: true })
 
       if (error) {
-        console.error("Upload error:", error.message)
+        console.error("❌ Upload error:", error.message)
+        alert("เกิดข้อผิดพลาดในการอัปโหลดภาพ: " + error.message)
         return null
       }
 
@@ -55,10 +115,9 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("image1").addEventListener("change", () => previewImage("image1", "preview1"))
-      document.getElementById("image2").addEventListener("change", () => previewImage("image2", "preview2"))
-      document.getElementById("image3").addEventListener("change", () => previewImage("image3", "preview3"))
-      document.getElementById("image4").addEventListener("change", () => previewImage("image4", "preview4"))
+      [1,2,3,4].forEach(i => {
+        document.getElementById(`image${i}`).addEventListener("change", () => previewImage(`image${i}`, `preview${i}`))
+      })
 
       document.getElementById("add-form").addEventListener("submit", async (e) => {
         e.preventDefault()
@@ -80,10 +139,11 @@
         }
 
         try {
+          const code = generateCode()
           const image_urls = []
 
           for (let i = 0; i < files.length; i++) {
-            const url = await uploadImage(files[i])
+            const url = await uploadImage(files[i], code, i + 1)
             image_urls.push(url || null)
           }
 
@@ -92,10 +152,7 @@
               name,
               price,
               description,
-              image_url1: image_urls[0],
-              image_url2: image_urls[1],
-              image_url3: image_urls[2],
-              image_url4: image_urls[3],
+              user_image_code: code,
               created_at: new Date().toISOString(),
             },
           ])
@@ -115,29 +172,36 @@
   </script>
 </head>
 <body>
-  <h2>เพิ่มพระเครื่อง</h2>
-  <form id="add-form">
-    <input type="text" id="name" placeholder="ชื่อพระ" required><br>
-    <input type="text" id="price" placeholder="ราคา" required><br>
-    <textarea id="description" placeholder="รายละเอียด"></textarea><br>
+  <div class="container">
+    <h2>เพิ่มพระเครื่อง</h2>
+    <form id="add-form">
+      <label>ชื่อพระ:</label>
+      <input type="text" id="name" required>
 
-    <label>ภาพที่ 1:</label><br>
-    <input type="file" id="image1" accept="image/*"><br>
-    <img id="preview1" class="preview" style="max-width:150px; margin-top:10px;"><br>
+      <label>ราคา:</label>
+      <input type="text" id="price" required>
 
-    <label>ภาพที่ 2:</label><br>
-    <input type="file" id="image2" accept="image/*"><br>
-    <img id="preview2" class="preview" style="max-width:150px; margin-top:10px;"><br>
+      <label>รายละเอียด:</label>
+      <textarea id="description" rows="4"></textarea>
 
-    <label>ภาพที่ 3:</label><br>
-    <input type="file" id="image3" accept="image/*"><br>
-    <img id="preview3" class="preview" style="max-width:150px; margin-top:10px;"><br>
+      <label>ภาพที่ 1:</label>
+      <input type="file" id="image1" accept="image/*">
+      <img id="preview1" class="preview">
 
-    <label>ภาพที่ 4:</label><br>
-    <input type="file" id="image4" accept="image/*"><br>
-    <img id="preview4" class="preview" style="max-width:150px; margin-top:10px;"><br><br>
+      <label>ภาพที่ 2:</label>
+      <input type="file" id="image2" accept="image/*">
+      <img id="preview2" class="preview">
 
-    <button type="submit">บันทึกข้อมูล</button>
-  </form>
+      <label>ภาพที่ 3:</label>
+      <input type="file" id="image3" accept="image/*">
+      <img id="preview3" class="preview">
+
+      <label>ภาพที่ 4:</label>
+      <input type="file" id="image4" accept="image/*">
+      <img id="preview4" class="preview">
+
+      <button type="submit">บันทึกข้อมูล</button>
+    </form>
+  </div>
 </body>
 </html>
