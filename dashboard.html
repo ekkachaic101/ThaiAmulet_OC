@@ -1,73 +1,144 @@
-// Supabase client
-const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co";
-const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2";
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// โหลดข้อมูลพระเครื่องทั้งหมด
-async function loadAmulets() {
-  const { data, error } = await supabase.from("amulets").select("*").order("id", { ascending: false });
-  if (error) {
-    console.error("Load error:", error);
-    return;
-  }
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ThaiAmulet_OC - ระบบหลังบ้าน</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Tahoma', sans-serif;
+      background: url('image.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .topbar {
+      background-color: #FFD700;
+      padding: 10px 20px;
+      color: #4B3E2A;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #FFF8DC;
+      position: fixed;
+      top: 50px;
+      left: 0;
+      bottom: 0;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+    .sidebar a {
+      display: block;
+      margin: 15px 0;
+      color: #4B3E2A;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .content {
+      margin-left: 240px;
+      padding: 30px;
+      margin-top: 60px;
+    }
+    .section {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
+    }
+    h2 {
+      color: #B8860B;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    input[type="text"], textarea, input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #B8860B;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    .preview {
+      max-width: 120px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .amulet-card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      background-color: #fff8dc;
+    }
+    .amulet-card img {
+      max-width: 100px;
+      margin-right: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">ThaiAmulet_OC - ระบบจัดการพระเครื่อง</div>
+  <div class="sidebar">
+    <a href="#add">เพิ่มพระเครื่อง</a>
+    <a href="#list">รายการทั้งหมด</a>
+    <a href="#stats">สถิติ</a>
+    <a href="#login">เข้าสู่ระบบ</a>
+    <a href="#logout">ออกจากระบบ</a>
+  </div>
+  <div class="content">
+    <div class="section" id="add">
+      <h2>เพิ่มพระเครื่อง</h2>
+      <form id="add-form">
+        <label>ชื่อพระ:</label>
+        <input type="text" id="name" required>
 
-  const grid = document.getElementById("product-grid");
-  grid.innerHTML = "<h2 style='padding:20px;'>รายการพระเครื่องทั้งหมด</h2>";
+        <label>ราคา:</label>
+        <input type="text" id="price" required>
 
-  data.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "product-card";
-    card.innerHTML = `
-      <img src="${item.image_url1 || ''}" alt="${item.name}">
-      <h3>${item.name}</h3>
-      <p>${item.description}</p>
-      <p><strong>ราคา:</strong> ${item.price} บาท</p>
-      <button onclick="editAmulet(${item.id})">✏️ แก้ไข</button>
-      <button onclick="deleteAmulet(${item.id})">🗑️ ลบ</button>
-    `;
-    grid.appendChild(card);
-  });
-}
+        <label>รายละเอียด:</label>
+        <textarea id="description" rows="3"></textarea>
 
-// ลบพระเครื่อง
-async function deleteAmulet(id) {
-  if (!confirm("คุณต้องการลบพระเครื่องนี้ใช่หรือไม่?")) return;
+        <label>ภาพที่ 1:</label>
+        <input type="file" id="image1" accept="image/*">
+        <img id="preview1" class="preview">
 
-  const { error } = await supabase.from("amulets").delete().eq("id", id);
-  if (error) {
-    alert("❌ เกิดข้อผิดพลาดในการลบ");
-    console.error(error);
-  } else {
-    alert("✅ ลบเรียบร้อยแล้ว");
-    loadAmulets();
-  }
-}
+        <label>ภาพที่ 2:</label>
+        <input type="file" id="image2" accept="image/*">
+        <img id="preview2" class="preview">
 
-// แก้ไขพระเครื่อง
-async function editAmulet(id) {
-  const newName = prompt("ชื่อพระใหม่:");
-  const newPrice = prompt("ราคาที่แก้ไข:");
-  const newDescription = prompt("คำอธิบายใหม่:");
+        <label>ภาพที่ 3:</label>
+        <input type="file" id="image3" accept="image/*">
+        <img id="preview3" class="preview">
 
-  if (!newName || !newPrice) {
-    alert("กรุณากรอกชื่อพระและราคา");
-    return;
-  }
+        <label>ภาพที่ 4:</label>
+        <input type="file" id="image4" accept="image/*">
+        <img id="preview4" class="preview">
 
-  const { error } = await supabase.from("amulets").update({
-    name: newName.trim(),
-    price: newPrice.trim(),
-    description: newDescription ? newDescription.trim() : ''
-  }).eq("id", id);
+        <button type="submit">บันทึกข้อมูล</button>
+      </form>
+    </div>
 
-  if (error) {
-    alert("❌ เกิดข้อผิดพลาดในการแก้ไข");
-    console.error(error);
-  } else {
-    alert("✅ แก้ไขเรียบร้อยแล้ว");
-    loadAmulets();
-  }
-}
-
-// โหลดข้อมูลเมื่อเปิดหน้า
-window.onload = loadAmulets;
+    <div class="section" id="list">
+      <h2>รายการพระเครื่องทั้งหมด</h2>
+      <div id="amulet-list"></div>
+    </div>
+  </div>
+</body>
+</html>
