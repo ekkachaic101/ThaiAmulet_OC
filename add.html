@@ -3,72 +3,141 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>เพิ่มข้อมูลพระเครื่อง</title>
-  <style>
-    body {
-      font-family: 'Sarabun', sans-serif;
-      background-color: #fff8dc;
-      color: #5c3a00;
-      padding: 40px;
-      max-width: 700px;
-      margin: auto;
-      border: 2px solid #d4af37;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  <title>เพิ่มพระเครื่อง</title>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const SUPABASE_URL = "https://srzqmhgdaedfoyakqmpg.supabase.co"
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ"
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+    function generateFilename(originalName) {
+      const timestamp = Date.now()
+      const random = Math.random().toString(36).substring(2, 8)
+      const ext = originalName.split('.').pop()
+      return `${timestamp}_${random}.${ext}`
     }
-    h1 {
-      text-align: center;
-      color: #d4af37;
+
+    async function uploadImage(file) {
+      if (!file) return null
+      const fileName = generateFilename(file.name)
+
+      const { data, error } = await supabase.storage
+        .from("amulet-images")
+        .upload(fileName, file, { upsert: true })
+
+      if (error) {
+        console.error("Upload error:", error.message)
+        return null
+      }
+
+      const { data: publicData } = supabase.storage
+        .from("amulet-images")
+        .getPublicUrl(fileName)
+
+      return publicData.publicUrl
     }
-    label {
-      display: block;
-      margin-top: 20px;
+
+    function previewImage(inputId, previewId) {
+      const input = document.getElementById(inputId)
+      const file = input.files[0]
+      const preview = document.getElementById(previewId)
+
+      if (file) {
+        const reader = new FileReader()
+        reader.onload = function (e) {
+          preview.src = e.target.result
+        }
+        reader.readAsDataURL(file)
+      } else {
+        preview.src = ""
+      }
     }
-    input[type="text"], input[type="number"], textarea, input[type="file"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #d4af37;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("image1").addEventListener("change", () => previewImage("image1", "preview1"))
+      document.getElementById("image2").addEventListener("change", () => previewImage("image2", "preview2"))
+      document.getElementById("image3").addEventListener("change", () => previewImage("image3", "preview3"))
+      document.getElementById("image4").addEventListener("change", () => previewImage("image4", "preview4"))
+
+      document.getElementById("add-form").addEventListener("submit", async (e) => {
+        e.preventDefault()
+
+        const name = document.getElementById("name").value.trim()
+        const price = document.getElementById("price").value.trim()
+        const description = document.getElementById("description").value.trim()
+
+        const files = [
+          document.getElementById("image1").files[0],
+          document.getElementById("image2").files[0],
+          document.getElementById("image3").files[0],
+          document.getElementById("image4").files[0],
+        ]
+
+        if (!name || !price || !files[0]) {
+          alert("กรุณากรอกชื่อพระ, ราคา และเลือกรูปอย่างน้อย 1 รูป")
+          return
+        }
+
+        try {
+          const image_urls = []
+
+          for (let i = 0; i < files.length; i++) {
+            const url = await uploadImage(files[i])
+            image_urls.push(url || null)
+          }
+
+          const { error } = await supabase.from("amulets").insert([
+            {
+              name,
+              price,
+              description,
+              image_url1: image_urls[0],
+              image_url2: image_urls[1],
+              image_url3: image_urls[2],
+              image_url4: image_urls[3],
+              created_at: new Date().toISOString(),
+            },
+          ])
+
+          if (error) throw error
+
+          alert("✅ บันทึกสำเร็จแล้ว!")
+          document.getElementById("add-form").reset()
+          document.querySelectorAll("img.preview").forEach(img => img.src = "")
+
+        } catch (err) {
+          console.error("Insert error:", err)
+          alert("❌ เกิดข้อผิดพลาด: " + err.message)
+        }
+      })
+    })
+  </script>
 </head>
 <body>
-  <h1>เพิ่มข้อมูลพระเครื่อง</h1>
+  <h2>เพิ่มพระเครื่อง</h2>
   <form id="add-form">
-    <label>ชื่อพระเครื่อง:</label>
-    <input type="text" id="name" required />
+    <input type="text" id="name" placeholder="ชื่อพระ" required><br>
+    <input type="text" id="price" placeholder="ราคา" required><br>
+    <textarea id="description" placeholder="รายละเอียด"></textarea><br>
 
-    <label>ราคา:</label>
-    <input type="number" id="price" required />
+    <label>ภาพที่ 1:</label><br>
+    <input type="file" id="image1" accept="image/*"><br>
+    <img id="preview1" class="preview" style="max-width:150px; margin-top:10px;"><br>
 
-    <label>รายละเอียดเพิ่มเติม:</label>
-    <textarea id="description" rows="4"></textarea>
+    <label>ภาพที่ 2:</label><br>
+    <input type="file" id="image2" accept="image/*"><br>
+    <img id="preview2" class="preview" style="max-width:150px; margin-top:10px;"><br>
 
-    <label>ภาพด้านหน้า:</label>
-    <input type="file" id="image1" accept="image/*" required />
+    <label>ภาพที่ 3:</label><br>
+    <input type="file" id="image3" accept="image/*"><br>
+    <img id="preview3" class="preview" style="max-width:150px; margin-top:10px;"><br>
 
-    <label>ภาพด้านหลัง:</label>
-    <input type="file" id="image2" accept="image/*" />
-
-    <label>ภาพด้านข้าง:</label>
-    <input type="file" id="image3" accept="image/*" />
-
-    <label>ภาพอื่น ๆ:</label>
-    <input type="file" id="image4" accept="image/*" />
+    <label>ภาพที่ 4:</label><br>
+    <input type="file" id="image4" accept="image/*"><br>
+    <img id="preview4" class="preview" style="max-width:150px; margin-top:10px;"><br><br>
 
     <button type="submit">บันทึกข้อมูล</button>
   </form>
-
-  <script type="module" src="app.js"></script>
 </body>
 </html>
