@@ -3,7 +3,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>เพิ่มพระเครื่อง</title>
+  <title>เพิ่มพระเครื่องและแสดงรายการ</title>
   <style>
     body {
       font-family: 'Sarabun', sans-serif;
@@ -14,10 +14,10 @@
       color: #4B3E2A;
     }
     .container {
-      max-width: 900px;
-      margin: 60px auto;
+      max-width: 1000px;
+      margin: 40px auto;
       background-color: rgba(255, 255, 240, 0.95);
-      padding: 40px;
+      padding: 30px;
       border-radius: 20px;
       box-shadow: 0 0 20px rgba(0,0,0,0.2);
     }
@@ -63,6 +63,20 @@
       border: 1px solid #ccc;
       border-radius: 8px;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 40px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #FFEBCD;
+      color: #6B4F1D;
+    }
   </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
@@ -77,24 +91,15 @@
 
     async function uploadImage(file, code, index) {
       if (!file) return null
-
       const ext = file.name.split('.').pop()
       const fileName = `${code}_${index}.${ext}`
-
-      const { data, error } = await supabase.storage
-        .from("amulet-images")
-        .upload(fileName, file, { upsert: true })
-
+      const { data, error } = await supabase.storage.from("amulet-images").upload(fileName, file, { upsert: true })
       if (error) {
-        console.error("❌ Upload error:", error.message)
+        console.error("Upload error:", error.message)
         alert("เกิดข้อผิดพลาดในการอัปโหลดภาพ: " + error.message)
         return null
       }
-
-      const { data: publicData } = supabase.storage
-        .from("amulet-images")
-        .getPublicUrl(fileName)
-
+      const { data: publicData } = supabase.storage.from("amulet-images").getPublicUrl(fileName)
       return publicData.publicUrl
     }
 
@@ -102,7 +107,6 @@
       const input = document.getElementById(inputId)
       const file = input.files[0]
       const preview = document.getElementById(previewId)
-
       if (file) {
         const reader = new FileReader()
         reader.onload = function (e) {
@@ -114,39 +118,53 @@
       }
     }
 
+    async function loadTable() {
+      const { data, error } = await supabase.from("amulets").select("name, price, description, user_image_code").order("created_at", { ascending: false })
+      if (error) {
+        console.error("Load error:", error.message)
+        return
+      }
+      const tbody = document.getElementById("amulet-table-body")
+      tbody.innerHTML = ""
+      data.forEach(row => {
+        const tr = document.createElement("tr")
+        tr.innerHTML = `
+          <td>${row.name}</td>
+          <td>${row.price}</td>
+          <td>${row.description}</td>
+          <td>${row.user_image_code}</td>
+          <td><img src="https://srzqmhgdaedfoyakqmpg.supabase.co/storage/v1/object/public/amulet-images/${row.user_image_code}_1.jpg" width="100"></td>
+        `
+        tbody.appendChild(tr)
+      })
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       [1,2,3,4].forEach(i => {
         document.getElementById(`image${i}`).addEventListener("change", () => previewImage(`image${i}`, `preview${i}`))
       })
+      loadTable()
 
       document.getElementById("add-form").addEventListener("submit", async (e) => {
         e.preventDefault()
-
         const name = document.getElementById("name").value.trim()
         const price = document.getElementById("price").value.trim()
         const description = document.getElementById("description").value.trim()
-
         const files = [
           document.getElementById("image1").files[0],
           document.getElementById("image2").files[0],
           document.getElementById("image3").files[0],
           document.getElementById("image4").files[0],
         ]
-
         if (!name || !price || !files[0]) {
           alert("กรุณากรอกชื่อพระ, ราคา และเลือกรูปอย่างน้อย 1 รูป")
           return
         }
-
         try {
           const code = generateCode()
-          const image_urls = []
-
           for (let i = 0; i < files.length; i++) {
-            const url = await uploadImage(files[i], code, i + 1)
-            image_urls.push(url || null)
+            await uploadImage(files[i], code, i + 1)
           }
-
           const { error } = await supabase.from("amulets").insert([
             {
               name,
@@ -156,13 +174,11 @@
               created_at: new Date().toISOString(),
             },
           ])
-
           if (error) throw error
-
           alert("✅ บันทึกสำเร็จแล้ว!")
           document.getElementById("add-form").reset()
           document.querySelectorAll("img.preview").forEach(img => img.src = "")
-
+          loadTable()
         } catch (err) {
           console.error("Insert error:", err)
           alert("❌ เกิดข้อผิดพลาด: " + err.message)
@@ -177,31 +193,38 @@
     <form id="add-form">
       <label>ชื่อพระ:</label>
       <input type="text" id="name" required>
-
       <label>ราคา:</label>
       <input type="text" id="price" required>
-
       <label>รายละเอียด:</label>
       <textarea id="description" rows="4"></textarea>
-
       <label>ภาพที่ 1:</label>
       <input type="file" id="image1" accept="image/*">
       <img id="preview1" class="preview">
-
       <label>ภาพที่ 2:</label>
       <input type="file" id="image2" accept="image/*">
       <img id="preview2" class="preview">
-
       <label>ภาพที่ 3:</label>
       <input type="file" id="image3" accept="image/*">
       <img id="preview3" class="preview">
-
       <label>ภาพที่ 4:</label>
       <input type="file" id="image4" accept="image/*">
       <img id="preview4" class="preview">
-
       <button type="submit">บันทึกข้อมูล</button>
     </form>
+
+    <h2>รายการพระเครื่อง</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ชื่อพระ</th>
+          <th>ราคา</th>
+          <th>รายละเอียด</th>
+          <th>รหัสภาพ</th>
+          <th>ภาพ</th>
+        </tr>
+      </thead>
+      <tbody id="amulet-table-body"></tbody>
+    </table>
   </div>
 </body>
 </html>
