@@ -1,54 +1,69 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>อัปโหลดพระเครื่อง</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <h2>📤 อัปโหลดพระเครื่อง</h2>
+  <form id="uploadForm">
+    <input type="text" name="name" placeholder="ชื่อพระ" required><br>
+    <input type="text" name="price" placeholder="ราคา" required><br>
+    <textarea name="description" placeholder="รายละเอียด"></textarea><br>
+    <input type="file" name="image1"><br>
+    <input type="file" name="image2"><br>
+    <input type="file" name="image3"><br>
+    <input type="file" name="image4"><br>
+    <button type="submit">บันทึกข้อมูล</button>
+  </form>
+  <div id="status"></div>
 
-const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co"
-const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2"
+  <script>
+    const SUPABASE_URL = "https://srzqmhgdaedfoyakqmpg.supabase.co"
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ"
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const form = e.target
+      const name = form.name.value
+      const price = parseFloat(form.price.value)
+      const description = form.description.value
+      const status = document.getElementById('status')
+      status.textContent = '⏳ กำลังอัปโหลด...'
 
-const form = document.getElementById('uploadForm')
-const status = document.getElementById('status')
+      const image_code = Math.random().toString(36).substring(2, 8).toUpperCase()
+      const imageUrls = {}
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault()
-  status.textContent = '⏳ กำลังอัปโหลด...'
+      for (let i = 1; i <= 4; i++) {
+        const file = form[`image${i}`].files[0]
+        if (file) {
+          const path = `${image_code}_${i}.jpg`
+          const { error } = await supabase.storage.from('amulet-images').upload(path, file)
+          if (error) {
+            status.textContent = `❌ อัปโหลดภาพที่ ${i} ไม่สำเร็จ: ` + error.message
+            return
+          }
+          imageUrls[`image_url${i}`] = `${SUPABASE_URL}/storage/v1/object/public/amulet-images/${path}`
+        }
+      }
 
-  const name = form.name.value
-  const price = parseFloat(form.price.value)
-  const file = form.image.files[0]
-  const image_code = generateRandomCode()
+      const { error: insertError } = await supabase.from('amulets').insert([{
+        name,
+        price,
+        description,
+        ...imageUrls
+      }])
 
-  if (!file || !name || isNaN(price)) {
-    status.textContent = '❌ กรุณากรอกข้อมูลให้ครบ'
-    return
-  }
+      if (insertError) {
+        status.textContent = '❌ บันทึกข้อมูลไม่สำเร็จ: ' + insertError.message
+        return
+      }
 
-  try {
-    const { error: uploadError } = await supabase.storage
-      .from('amulet-images')
-      .upload(`${image_code}.jpg`, file)
-
-    if (uploadError) {
-      status.textContent = '❌ อัปโหลดภาพไม่สำเร็จ: ' + uploadError.message
-      return
-    }
-
-    const { error: insertError } = await supabase
-      .from('amulets') // ตรวจสอบว่า table นี้มีอยู่ใน Supabase
-      .insert([{ name, price, image_code }])
-
-    if (insertError) {
-      status.textContent = '❌ บันทึกข้อมูลไม่สำเร็จ: ' + insertError.message
-      return
-    }
-
-    const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/amulet-images/${image_code}.jpg`
-    status.innerHTML = `✅ อัปโหลดสำเร็จ!<br>รหัสภาพ: ${image_code}<br><img src="${imageUrl}" style="max-width:300px;">`
-    form.reset()
-  } catch (err) {
-    status.textContent = '❌ เกิดข้อผิดพลาด: ' + err.message
-  }
-})
-
-function generateRandomCode() {
-  return Math.random().toString(36).substring(2, 8).toUpperCase()
-}
+      status.innerHTML = `✅ อัปโหลดสำเร็จ! รหัสภาพ: ${image_code}`
+      form.reset()
+    })
+  </script>
+</body>
+</html>

@@ -2,101 +2,17 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>ThaiAmulet_OC - ระบบหลังบ้าน</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Tahoma', sans-serif;
-      background: url('image.png') no-repeat center center fixed;
-      background-size: cover;
-    }
-    .topbar {
-      background-color: #FFD700;
-      padding: 10px 20px;
-      color: #4B3E2A;
-      font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #FFF8DC;
-      position: fixed;
-      top: 50px;
-      left: 0;
-      bottom: 0;
-      padding: 20px;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    }
-    .sidebar a {
-      display: block;
-      margin: 15px 0;
-      color: #4B3E2A;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .content {
-      margin-left: 240px;
-      padding: 30px;
-      margin-top: 60px;
-    }
-    .section {
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      margin-bottom: 40px;
-    }
-    h2 {
-      color: #B8860B;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 10px;
-    }
-    input[type="text"], textarea, input[type="file"] {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      background-color: #B8860B;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 15px;
-    }
-    .preview {
-      max-width: 120px;
-      margin-top: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    .amulet-card {
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 20px;
-      background-color: #fff8dc;
-    }
-    .amulet-card img {
-      max-width: 100px;
-      margin-right: 10px;
-      border-radius: 5px;
-    }
-  </style>
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  <title>รายการพระเครื่อง</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <h2>📋 รายการพระเครื่องทั้งหมด</h2>
+  <div id="amulet-list"></div>
 
+  <script>
     const SUPABASE_URL = "https://srzqmhgdaedfoyakqmpg.supabase.co"
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ"
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
     async function loadAmulets() {
       const { data, error } = await supabase.from("amulets").select("*").order("id", { ascending: false })
@@ -108,17 +24,17 @@
       listContainer.innerHTML = ""
       data.forEach(item => {
         const card = document.createElement("div")
-        card.className = "amulet-card"
         card.innerHTML = `
           <h3>${item.name}</h3>
           <p><strong>ราคา:</strong> ${item.price}</p>
           <p><strong>รายละเอียด:</strong> ${item.description}</p>
           <div>
-            ${item.image_url1 ? `<img src="${item.image_url1}" />` : ""}
-            ${item.image_url2 ? `<img src="${item.image_url2}" />` : ""}
-            ${item.image_url3 ? `<img src="${item.image_url3}" />` : ""}
-            ${item.image_url4 ? `<img src="${item.image_url4}" />` : ""}
+            ${item.image_url1 ? `<img src="${item.image_url1}" width="100">` : ""}
+            ${item.image_url2 ? `<img src="${item.image_url2}" width="100">` : ""}
+            ${item.image_url3 ? `<img src="${item.image_url3}" width="100">` : ""}
+            ${item.image_url4 ? `<img src="${item.image_url4}" width="100">` : ""}
           </div>
+          <hr>
         `
         listContainer.appendChild(card)
       })
@@ -128,53 +44,5 @@
       loadAmulets()
     })
   </script>
-</head>
-<body>
-  <div class="topbar">ThaiAmulet_OC - ระบบจัดการพระเครื่อง</div>
-  <div class="sidebar">
-    <a href="#add">เพิ่มพระเครื่อง</a>
-    <a href="#list">รายการทั้งหมด</a>
-    <a href="#stats">สถิติ</a>
-    <a href="#login">เข้าสู่ระบบ</a>
-    <a href="#logout">ออกจากระบบ</a>
-  </div>
-  <div class="content">
-    <div class="section" id="add">
-      <h2>เพิ่มพระเครื่อง</h2>
-      <form id="add-form">
-        <label>ชื่อพระ:</label>
-        <input type="text" id="name" required>
-
-        <label>ราคา:</label>
-        <input type="text" id="price" required>
-
-        <label>รายละเอียด:</label>
-        <textarea id="description" rows="3"></textarea>
-
-        <label>ภาพที่ 1:</label>
-        <input type="file" id="image1" accept="image/*">
-        <img id="preview1" class="preview">
-
-        <label>ภาพที่ 2:</label>
-        <input type="file" id="image2" accept="image/*">
-        <img id="preview2" class="preview">
-
-        <label>ภาพที่ 3:</label>
-        <input type="file" id="image3" accept="image/*">
-        <img id="preview3" class="preview">
-
-        <label>ภาพที่ 4:</label>
-        <input type="file" id="image4" accept="image/*">
-        <img id="preview4" class="preview">
-
-        <button type="submit">บันทึกข้อมูล</button>
-      </form>
-    </div>
-
-    <div class="section" id="list">
-      <h2>รายการพระเครื่องทั้งหมด</h2>
-      <div id="amulet-list"></div>
-    </div>
-  </div>
 </body>
 </html>
