@@ -2,17 +2,32 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>รายการพระเครื่อง</title>
+  <title>รายการพระเครื่อง (Viewer)</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <h2>📋 รายการพระเครื่องทั้งหมด</h2>
+  <h2>4cb รายการพระเครื่องสำหรับผู้เข้าชม</h2>
   <div id="amulet-list"></div>
 
   <script>
     const SUPABASE_URL = "https://srzqmhgdaedfoyakqmpg.supabase.co"
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ"
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+    async function checkViewerRole() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        window.location.href = 'login.html'
+        return
+      }
+      const role = user.user_metadata?.role
+      if (role !== 'viewer') {
+        alert('❌ คุณไม่มีสิทธิ์เข้าหน้านี้')
+        window.location.href = 'upload.html'
+        return
+      }
+      loadAmulets()
+    }
 
     async function loadAmulets() {
       const { data, error } = await supabase.from("amulets").select("*").order("id", { ascending: false })
@@ -41,7 +56,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      loadAmulets()
+      checkViewerRole()
     })
   </script>
 </body>
