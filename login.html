@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>เข้าสู่ระบบ - ThaiAmulet_OC</title>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       font-family: 'Sarabun', sans-serif;
@@ -57,12 +58,16 @@
       color: #007bff;
       text-decoration: none;
     }
+    #status {
+      margin-top: 10px;
+      text-align: center;
+      color: red;
+    }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <div class="login-box">
-    <h2>🔑 เข้าสู่ระบบ</h2>
+    <h2>🔐 เข้าสู่ระบบ</h2>
     <form id="loginForm">
       <label for="email">อีเมล</label>
       <input type="email" id="email" required>
@@ -78,7 +83,7 @@
 
   <script>
     const SUPABASE_URL = "https://srzqmhgdaedfoyakqmpg.supabase.co"
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ"
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -87,12 +92,16 @@
       const password = document.getElementById('password').value
       const status = document.getElementById('status')
 
+      status.textContent = '⏳ กำลังเข้าสู่ระบบ...'
+
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) {
         status.textContent = '❌ เข้าสู่ระบบไม่สำเร็จ: ' + error.message
       } else {
         status.textContent = '✅ เข้าสู่ระบบสำเร็จ!'
-        window.location.href = 'upload.html'
+        setTimeout(() => {
+          window.location.href = 'upload.html'
+        }, 1000)
       }
     })
   </script>
