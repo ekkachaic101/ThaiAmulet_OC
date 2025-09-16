@@ -93,7 +93,10 @@
         user_image_code: image_code,
         created_at: new Date().toISOString(),
         user_id: user.id,
-        ...imageUrls
+        image_url1: imageUrls.image_url1 || null,
+        image_url2: imageUrls.image_url2 || null,
+        image_url3: imageUrls.image_url3 || null,
+        image_url4: imageUrls.image_url4 || null
       }])
 
       if (insertError) {
