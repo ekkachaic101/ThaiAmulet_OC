@@ -62,10 +62,10 @@
 <body>
   <div class="login-container">
     <h2>เข้าสู่ระบบด้วย GitHub</h2>
-    <button class="btn" onclick="loginWithGitHub()">
-      🔒 เข้าสู่ระบบด้วย GitHub
+    <button class="btn" id="githubLoginBtn">
+      F512 เข้าสู่ระบบด้วย GitHub
     </button>
-    <a href="index.html">🏠 กลับหน้าแรก</a>
+    <a href="index.html">F3E0 กลับหน้าแรก</a>
   </div>
 
   <script type="module">
@@ -75,10 +75,12 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
     )
 
-    async function loginWithGitHub() {
-      const { error } = await supabase.auth.signInWithOAuth({ provider: 'github' })
-      if (error) alert('เกิดข้อผิดพลาดในการเข้าสู่ระบบ: ' + error.message)
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("githubLoginBtn").addEventListener("click", async () => {
+        const { error } = await supabase.auth.signInWithOAuth({ provider: 'github' })
+        if (error) alert('เกิดข้อผิดพลาดในการเข้าสู่ระบบ: ' + error.message)
+      })
+    })
   </script>
 </body>
 </html>

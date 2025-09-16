@@ -4,6 +4,77 @@
 <head>
   <meta charset="UTF-8">
   <title>เพิ่มพระเครื่อง</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Sarabun', sans-serif;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/4/4e/Kranok_pattern_gold.png') repeat;
+      background-size: 300px;
+      color: #333;
+    }
+    .header {
+      text-align: right;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.85);
+    }
+    .header span {
+      font-weight: bold;
+    }
+    .header button {
+      margin-left: 10px;
+      background-color: #B22222;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .header button:hover {
+      background-color: #8B0000;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: calc(100vh - 60px);
+      background-color: rgba(255, 255, 255, 0.85);
+      margin: 20px auto;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 600px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    h2 {
+      color: #B8860B;
+      margin-bottom: 20px;
+    }
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    input, textarea, select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button.submit {
+      background-color: #DAA520;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button.submit:hover {
+      background-color: #b07d00;
+    }
+  </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
     const supabase = createClient(
@@ -34,16 +105,25 @@
   </script>
 </head>
 <body>
-  <div style="text-align:right; padding:10px;">
+  <div class="header">
     👤 <span id="username">กำลังโหลด...</span>
-    <button id="logoutBtn" style="margin-left:10px; background-color:#B22222; color:white; border:none; padding:5px 10px; border-radius:5px;">
-      🚪 ออกจากระบบ
-    </button>
+    <button id="logoutBtn">🚪 ออกจากระบบ</button>
   </div>
 
   <div class="container">
     <h2>เพิ่มพระเครื่อง</h2>
-    <!-- ฟอร์มเพิ่มพระเครื่องจะอยู่ตรงนี้ -->
+    <form>
+      <input type="text" placeholder="ชื่อพระเครื่อง" required>
+      <textarea placeholder="รายละเอียด" rows="4"></textarea>
+      <select>
+        <option>ประเภท</option>
+        <option>พระบูชา</option>
+        <option>พระเหรียญ</option>
+        <option>พระผง</option>
+      </select>
+      <input type="file">
+      <button type="submit" class="submit">บันทึกข้อมูล</button>
+    </form>
   </div>
 </body>
 </html>
