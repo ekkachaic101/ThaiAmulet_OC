@@ -1,14 +1,70 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <title>เข้าสู่ระบบด้วย GitHub</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Sarabun', sans-serif;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/4/4e/Kranok_pattern_gold.png') repeat;
+      background-size: 300px;
+      color: #333;
+    }
+    .login-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: rgba(255, 255, 255, 0.85);
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    h2 {
+      color: #B8860B;
+      margin-bottom: 20px;
+    }
+    .btn {
+      background-color: #DAA520;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn:hover {
+      background-color: #b07d00;
+    }
+    .back-button {
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .back-button:hover {
+      text-decoration: underline;
+    }
+  </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
     const supabase = createClient(
       'https://srzqmhgdaedfoyakqmpg.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
     )
+
     document.addEventListener("DOMContentLoaded", async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
@@ -29,8 +85,9 @@
 <body>
   <div class="login-box">
     <h2>เข้าสู่ระบบด้วย GitHub</h2>
-    <button id="github-login">🔐 เข้าสู่ระบบด้วย GitHub</button>
-    <br>
+    <button class="btn" id="github-login">
+      🔐 เข้าสู่ระบบด้วย GitHub
+    </button>
     <a href="index.html" class="back-button">🏠 กลับหน้าแรก</a>
   </div>
 </body>
