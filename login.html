@@ -3,72 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <title>เข้าสู่ระบบด้วย GitHub</title>
-  <style>
-    body {
-      font-family: 'Sarabun', sans-serif;
-      background: url('image.png') no-repeat center center fixed;
-      background-size: cover;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .login-box {
-      background-color: rgba(255, 255, 240, 0.95);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      text-align: center;
-      width: 400px;
-    }
-    h2 {
-      color: #6B4F1D;
-      margin-bottom: 30px;
-    }
-    button {
-      background-color: #333;
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
-    button:hover {
-      background-color: #555;
-    }
-    .back-button {
-      background-color: #B8860B;
-      color: white;
-      text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 16px;
-      display: inline-block;
-    }
-    .back-button:hover {
-      background-color: #DAA520;
-    }
-  </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
     const supabase = createClient(
       'https://srzqmhgdaedfoyakqmpg.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
     )
-
     document.addEventListener("DOMContentLoaded", async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
         window.location.href = "add.html"
       }
-
       document.getElementById("github-login").addEventListener("click", async () => {
-        const { error } = await supabase.auth.signInWithOAuth({ provider: 'github' })
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'github',
+          options: {
+            redirectTo: 'https://thai-amulet-oc.vercel.app/add.html'
+          }
+        })
         if (error) alert("เกิดข้อผิดพลาดในการเข้าสู่ระบบ: " + error.message)
       })
     })
