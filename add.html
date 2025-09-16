@@ -18,25 +18,29 @@
         window.location.href = "login.html"
         return
       }
+
       const name = user.user_metadata?.preferred_username || user.user_metadata?.email || "ผู้ใช้ไม่ทราบชื่อ"
       document.getElementById("username").textContent = name
-    })
 
-    async function logout() {
-      const { error } = await supabase.auth.signOut()
-      if (!error) {
-        window.location.href = "login.html"
-      } else {
-        alert("เกิดข้อผิดพลาดในการออกจากระบบ: " + error.message)
-      }
-    }
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        const { error } = await supabase.auth.signOut()
+        if (!error) {
+          window.location.href = "login.html"
+        } else {
+          alert("เกิดข้อผิดพลาดในการออกจากระบบ: " + error.message)
+        }
+      })
+    })
   </script>
 </head>
 <body>
   <div style="text-align:right; padding:10px;">
     👤 <span id="username">กำลังโหลด...</span>
-    <button onclick="logout()" style="margin-left:10px; background-color:#B22222; color:white; border:none; padding:5px 10px; border-radius:5px;">🚪 ออกจากระบบ</button>
+    <button id="logoutBtn" style="margin-left:10px; background-color:#B22222; color:white; border:none; padding:5px 10px; border-radius:5px;">
+      🚪 ออกจากระบบ
+    </button>
   </div>
+
   <div class="container">
     <h2>เพิ่มพระเครื่อง</h2>
     <!-- ฟอร์มเพิ่มพระเครื่องจะอยู่ตรงนี้ -->
