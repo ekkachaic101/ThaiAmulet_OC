@@ -1,32 +1,43 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <title>อัปโหลดพระเครื่อง</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #fffbe6; }
+    h2 { color: #b48b00; }
+    input, textarea, button { margin: 5px 0; width: 100%; padding: 8px; }
+    button { background: #b48b00; color: white; border: none; cursor: pointer; }
+    button:hover { background: #d4a017; }
+    #status { margin-top: 10px; font-weight: bold; }
+  </style>
 </head>
 <body>
   <h2>📤 อัปโหลดพระเครื่อง</h2>
   <button onclick="logout()">🚪 ออกจากระบบ</button>
+
   <form id="uploadForm">
     <input type="text" name="name" placeholder="ชื่อพระ" required><br>
     <input type="text" name="price" placeholder="ราคา" required><br>
     <textarea name="description" placeholder="รายละเอียด"></textarea><br>
-    <input type="file" name="image1"><br>
-    <input type="file" name="image2"><br>
-    <input type="file" name="image3"><br>
-    <input type="file" name="image4"><br>
+    <input type="file" name="image1" accept="image/*"><br>
+    <input type="file" name="image2" accept="image/*"><br>
+    <input type="file" name="image3" accept="image/*"><br>
+    <input type="file" name="image4" accept="image/*"><br>
     <button type="submit">บันทึกข้อมูล</button>
   </form>
+
   <div id="status"></div>
 
   <script>
     const SUPABASE_URL = "https://srzqmhgdaedfoyakqmpg.supabase.co"
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // 🔒 ใช้ Key ที่ปลอดภัย
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
     async function checkLoginAndRole() {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { user }, error } = await supabase.auth.getUser()
       if (!user) {
         window.location.href = 'login.html'
         return
@@ -47,11 +58,17 @@
     document.getElementById('uploadForm').addEventListener('submit', async (e) => {
       e.preventDefault()
       const form = e.target
-      const name = form.name.value
-      const price = parseFloat(form.price.value)
-      const description = form.description.value
+      const name = form.name.value.trim()
+      const price = form.price.value.trim()
+      const description = form.description.value.trim()
       const status = document.getElementById('status')
       status.textContent = '⏳ กำลังอัปโหลด...'
+
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError || !user) {
+        status.textContent = '❌ ไม่พบผู้ใช้ที่ล็อกอิน'
+        return
+      }
 
       const image_code = Math.random().toString(36).substring(2, 8).toUpperCase()
       const imageUrls = {}
@@ -60,9 +77,9 @@
         const file = form[`image${i}`].files[0]
         if (file) {
           const path = `${image_code}_${i}.jpg`
-          const { error } = await supabase.storage.from('amulet-images').upload(path, file)
-          if (error) {
-            status.textContent = `❌ อัปโหลดภาพที่ ${i} ไม่สำเร็จ: ` + error.message
+          const { error: uploadError } = await supabase.storage.from('amulet-images').upload(path, file)
+          if (uploadError) {
+            status.textContent = `❌ อัปโหลดภาพที่ ${i} ไม่สำเร็จ: ` + uploadError.message
             return
           }
           imageUrls[`image_url${i}`] = `${SUPABASE_URL}/storage/v1/object/public/amulet-images/${path}`
@@ -73,6 +90,9 @@
         name,
         price,
         description,
+        user_image_code: image_code,
+        created_at: new Date().toISOString(),
+        user_id: user.id,
         ...imageUrls
       }])
 
