@@ -4,8 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <title>เพิ่มพระเครื่อง</title>
+  <link rel="stylesheet" href="style.css">
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
     const supabase = createClient(
       'https://srzqmhgdaedfoyakqmpg.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
@@ -20,26 +22,48 @@
       }
       const name = user.user_metadata?.preferred_username || user.user_metadata?.email || "ผู้ใช้ไม่ทราบชื่อ"
       document.getElementById("username").textContent = name
-    })
 
-    async function logout() {
-      const { error } = await supabase.auth.signOut()
-      if (!error) {
-        window.location.href = "login.html"
-      } else {
-        alert("เกิดข้อผิดพลาดในการออกจากระบบ: " + error.message)
+      // ผูกฟังก์ชัน logout กับ window
+      window.logout = async function () {
+        const { error } = await supabase.auth.signOut()
+        if (!error) {
+          window.location.href = "index.html"
+        } else {
+          alert("เกิดข้อผิดพลาดในการออกจากระบบ: " + error.message)
+        }
       }
-    }
+    })
   </script>
 </head>
 <body>
+  <nav class="navbar">
+    <ul>
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
+      <li><a href="list.html">รายการทั้งหมด</a></li>
+      <li><a href="stats.html">สถิติ</a></li>
+      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
   <div style="text-align:right; padding:10px;">
     👤 <span id="username">กำลังโหลด...</span>
-    <button onclick="logout()" style="margin-left:10px; background-color:#B22222; color:white; border:none; padding:5px 10px; border-radius:5px;">🚪 ออกจากระบบ</button>
   </div>
+
   <div class="container">
     <h2>เพิ่มพระเครื่อง</h2>
-    <!-- ฟอร์มเพิ่มพระเครื่องจะอยู่ตรงนี้ -->
+    <form id="add-form">
+      <label>ชื่อพระ:</label>
+      <input type="text" id="name" required>
+      <label>ราคา:</label>
+      <input type="text" id="price" required>
+      <label>รายละเอียด:</label>
+      <textarea id="description" rows="4"></textarea>
+      <label>ภาพ:</label>
+      <input type="file" id="image1" accept="image/*">
+      <img id="preview1" class="preview">
+      <button type="submit">บันทึกข้อมูล</button>
+    </form>
   </div>
 </body>
 </html>
