@@ -5,6 +5,76 @@
   <meta charset="UTF-8">
   <title>เพิ่มพระเครื่อง</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #fffaf0;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+    form {
+      background-color: #fff8dc;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #f0c040;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #e0b030;
+    }
+    .preview {
+      margin-top: 10px;
+      max-width: 150px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+      background-color: #fff8dc;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f0e68c;
+    }
+    img.table-img {
+      width: 80px;
+      height: auto;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      object-fit: cover;
+    }
+  </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -60,13 +130,37 @@
       }
     }
 
+    async function loadTable() {
+      const { data, error } = await supabase
+        .from("amulets")
+        .select("name, price, image_url1")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("โหลดข้อมูลตารางผิดพลาด:", error);
+        return;
+      }
+
+      const tableBody = document.getElementById("amulet-table-body");
+      tableBody.innerHTML = "";
+      data.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>${item.price}</td>
+          <td>${item.image_url1 ? `<img src="${item.image_url1}" class="table-img">` : ""}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
     document.addEventListener("DOMContentLoaded", async () => {
       await initializeUser();
+      await loadTable();
 
       const form = document.getElementById("add-form");
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        console.log("📌 เริ่มการ submit");
 
         const name = document.getElementById("name").value.trim();
         const price = document.getElementById("price").value.trim();
@@ -80,7 +174,6 @@
 
         try {
           const imageUrl = await uploadImage(imageFile);
-          console.log("✅ URL ภาพ:", imageUrl);
 
           const { error } = await supabase.from("amulets").insert([
             {
@@ -102,6 +195,7 @@
           alert("✅ บันทึกสำเร็จแล้ว!");
           form.reset();
           document.getElementById("preview1").src = "";
+          await loadTable();
 
         } catch (err) {
           console.error("❌ เกิดข้อผิดพลาด:", err);
@@ -153,6 +247,20 @@
       <img id="preview1" class="preview">
       <button type="submit">บันทึกข้อมูล</button>
     </form>
+
+    <h3>รายการพระเครื่องที่อัปโหลดแล้ว</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ชื่อพระ</th>
+          <th>ราคา</th>
+          <th>ภาพ</th>
+        </tr>
+      </thead>
+      <tbody id="amulet-table-body">
+        <!-- ข้อมูลจะถูกเพิ่มโดย JavaScript -->
+      </tbody>
+    </table>
   </div>
 </body>
 </html>
