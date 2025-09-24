@@ -6,233 +6,21 @@
   <title>เพิ่มพระเครื่อง</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      font-family: sans-serif;
-      background-color: #fffaf0;
-    }
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-    }
-    form {
-      background-color: #fff8dc;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      background-color: #f0c040;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button:hover {
-      background-color: #e0b030;
-    }
-    .preview {
-      margin-top: 10px;
-      max-width: 150px;
-      border-radius: 6px;
-      border: 1px solid #aaa;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 30px;
-      background-color: #fff8dc;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background-color: #f0e68c;
-    }
-    img.table-img {
-      width: 80px;
-      height: auto;
-      border-radius: 6px;
-      border: 1px solid #aaa;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      object-fit: cover;
-    }
+    body { font-family: sans-serif; background-color: #fffaf0; }
+    .container { max-width: 1000px; margin: auto; padding: 20px; }
+    form { background-color: #fff8dc; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    button { margin-top: 15px; padding: 10px 20px; background-color: #f0c040; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    button:hover { background-color: #e0b030; }
+    .preview { margin-top: 10px; max-width: 150px; border-radius: 6px; border: 1px solid #aaa; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    table { width: 100%; border-collapse: collapse; margin-top: 30px; background-color: #fff8dc; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background-color: #f0e68c; }
+    img.table-img { width: 80px; height: auto; border-radius: 6px; border: 1px solid #aaa; box-shadow: 0 2px 4px rgba(0,0,0,0.2); object-fit: cover; }
   </style>
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-    const supabase = createClient(
-      'https://srzqmhgdaedfoyakqmpg.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
-    );
-
-    let sessionToken = null;
-    let userId = null;
-
-    async function initializeUser() {
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-
-      if (userError || !userData.user || sessionError || !sessionData.session) {
-        alert("กรุณาเข้าสู่ระบบก่อนใช้งาน");
-        window.location.href = "login.html";
-        return;
-      }
-
-      sessionToken = sessionData.session.access_token;
-      userId = userData.user.id;
-      const name = userData.user.user_metadata?.preferred_username || userData.user.user_metadata?.email || "ผู้ใช้ไม่ทราบชื่อ";
-      document.getElementById("username").textContent = name;
-    }
-
-    async function uploadImage(file) {
-      if (!file || !sessionToken) return null;
-      const filePath = `public/${Date.now()}_${file.name}`;
-      const { data, error } = await supabase.storage
-        .from("amulet-images")
-        .upload(filePath, file, {
-          upsert: false,
-          headers: {
-            Authorization: `Bearer ${sessionToken}`
-          }
-        });
-      if (error) {
-        console.error("Upload error:", error);
-        alert("❌ อัปโหลดภาพไม่สำเร็จ: " + error.message);
-        return null;
-      }
-      return `https://srzqmhgdaedfoyakqmpg.supabase.co/storage/v1/object/public/amulet-images/${filePath}`;
-    }
-
-    async function logout() {
-      const { error } = await supabase.auth.signOut();
-      if (!error) {
-        window.location.href = "index.html";
-      } else {
-        alert("เกิดข้อผิดพลาดในการออกจากระบบ: " + error.message);
-      }
-    }
-
-    async function loadTable() {
-      const { data, error } = await supabase
-        .from("amulets")
-        .select("name, price, image_url1")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("โหลดข้อมูลตารางผิดพลาด:", error);
-        return;
-      }
-
-      const tableBody = document.getElementById("amulet-table-body");
-      tableBody.innerHTML = "";
-      data.forEach(item => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${item.name}</td>
-          <td>${item.price}</td>
-          <td>${item.image_url1 ? `<img src="${item.image_url1}" class="table-img">` : ""}</td>
-        `;
-        tableBody.appendChild(row);
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      await initializeUser();
-      await loadTable();
-
-      const form = document.getElementById("add-form");
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const name = document.getElementById("name").value.trim();
-        const price = document.getElementById("price").value.trim();
-        const description = document.getElementById("description").value.trim();
-        const imageFile = document.getElementById("image1").files[0];
-
-        if (!name || !price || !imageFile) {
-          alert("กรุณากรอกชื่อพระ, ราคา และเลือกรูปภาพ");
-          return;
-        }
-
-        try {
-          const imageUrl = await uploadImage(imageFile);
-
-          const { error } = await supabase.from("amulets").insert([
-            {
-              name,
-              price,
-              description,
-              image_url1: imageUrl,
-              created_at: new Date().toISOString(),
-              user_id: userId
-            },
-          ], {
-            headers: {
-              Authorization: `Bearer ${sessionToken}`
-            }
-          });
-
-          if (error) throw error;
-
-          alert("✅ บันทึกสำเร็จแล้ว!");
-          form.reset();
-          document.getElementById("preview1").src = "";
-          await loadTable();
-
-        } catch (err) {
-          console.error("❌ เกิดข้อผิดพลาด:", err);
-          alert("❌ เกิดข้อผิดพลาด: " + err.message);
-        }
-      });
-
-      document.getElementById("image1").addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            document.getElementById("preview1").src = reader.result;
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-
-      window.logout = logout;
-    });
-  </script>
 </head>
 <body>
-  <nav class="navbar">
-    <ul>
-      <li><a href="index.html">หน้าแรก</a></li>
-      <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
-      <li><a href="list.html">รายการทั้งหมด</a></li>
-      <li><a href="stats.html">สถิติ</a></li>
-      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
-    </ul>
-  </nav>
-
-  <div style="text-align:right; padding:10px;">
-    👤 <span id="username">กำลังโหลด...</span>
-  </div>
-
   <div class="container">
     <h2>เพิ่มพระเครื่อง</h2>
     <form id="add-form">
@@ -242,13 +30,23 @@
       <input type="text" id="price" required>
       <label>รายละเอียด:</label>
       <textarea id="description" rows="4"></textarea>
-      <label>ภาพ:</label>
+      <label>ภาพด้านที่ 1:</label>
       <input type="file" id="image1" accept="image/*">
       <img id="preview1" class="preview">
+      <label>ภาพด้านที่ 2:</label>
+      <input type="file" id="image2" accept="image/*">
+      <img id="preview2" class="preview">
+      <label>ภาพด้านที่ 3:</label>
+      <input type="file" id="image3" accept="image/*">
+      <img id="preview3" class="preview">
+      <label>ภาพด้านที่ 4:</label>
+      <input type="file" id="image4" accept="image/*">
+      <img id="preview4" class="preview">
       <button type="submit">บันทึกข้อมูล</button>
     </form>
 
     <h3>รายการพระเครื่องที่อัปโหลดแล้ว</h3>
+    <input type="text" id="search" placeholder="🔍 ค้นหาชื่อพระ" style="width:100%; padding:10px; margin-top:20px;">
     <table>
       <thead>
         <tr>
