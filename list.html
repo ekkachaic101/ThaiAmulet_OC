@@ -31,9 +31,15 @@
     .navbar ul li a:hover {
       color: #000;
     }
-    .sort-bar {
+    .sort-bar, .search-bar {
       margin: 10px 0 20px;
       text-align: left;
+    }
+    .search-bar input {
+      padding: 8px;
+      width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
     #amulet-list {
       display: grid;
@@ -64,6 +70,24 @@
     .amulet-item p {
       margin: 5px 0;
     }
+    .amulet-actions {
+      margin-top: 10px;
+    }
+    .amulet-actions button {
+      margin: 5px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .edit-btn {
+      background-color: #f0c040;
+      color: #000;
+    }
+    .delete-btn {
+      background-color: #d9534f;
+      color: #fff;
+    }
   </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
@@ -74,11 +98,12 @@
     );
 
     let amulets = [];
+    let filteredAmulets = [];
 
     document.addEventListener("DOMContentLoaded", async () => {
       const { data, error } = await supabase
         .from("amulets")
-        .select("name, price, description, image_url1, image_url2, image_url3, image_url4, created_at");
+        .select("id, name, price, description, image_url1, image_url2, image_url3, image_url4, created_at");
 
       if (error) {
         console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", error);
@@ -87,6 +112,7 @@
       }
 
       amulets = data;
+      filteredAmulets = [...amulets];
       renderAmulets();
     });
 
@@ -94,12 +120,12 @@
       const listContainer = document.getElementById("amulet-list");
       listContainer.innerHTML = "";
 
-      if (amulets.length === 0) {
-        listContainer.innerHTML = "<p>ยังไม่มีรายการพระเครื่อง</p>";
+      if (filteredAmulets.length === 0) {
+        listContainer.innerHTML = "<p>ไม่พบรายการพระเครื่อง</p>";
         return;
       }
 
-      const sorted = [...amulets];
+      const sorted = [...filteredAmulets];
       sorted.sort((a, b) => {
         if (sortBy === "name") return a.name.localeCompare(b.name);
         if (sortBy === "price") return parseFloat(a.price) - parseFloat(b.price);
@@ -117,6 +143,10 @@
           ${item.image_url4 ? `<img src="${item.image_url4}" alt="ภาพเพิ่มเติม">` : ""}
           <p><strong>ราคา:</strong> ${item.price}</p>
           <p><strong>รายละเอียด:</strong> ${item.description}</p>
+          <div class="amulet-actions">
+            <button class="edit-btn" onclick="editAmulet('${item.id}')">✏️ แก้ไข</button>
+            <button class="delete-btn" onclick="deleteAmulet('${item.id}')">🗑️ ลบ</button>
+          </div>
         `;
         listContainer.appendChild(div);
       });
@@ -124,6 +154,35 @@
 
     window.changeSort = function(value) {
       renderAmulets(value);
+    }
+
+    window.filterAmulets = function() {
+      const keyword = document.getElementById("search").value.toLowerCase();
+      filteredAmulets = amulets.filter(item => item.name.toLowerCase().includes(keyword));
+      renderAmulets(document.getElementById("sort").value);
+    }
+
+    window.editAmulet = function(id) {
+      window.location.href = `edit.html?id=${id}`;
+    }
+
+    window.deleteAmulet = async function(id) {
+      if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?")) return;
+
+      const { error } = await supabase
+        .from("amulets")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+        console.error(error);
+        return;
+      }
+
+      amulets = amulets.filter(item => item.id !== id);
+      filteredAmulets = filteredAmulets.filter(item => item.id !== id);
+      renderAmulets();
     }
   </script>
 </head>
@@ -139,6 +198,10 @@
 
   <div class="container">
     <h2>รายการพระเครื่องทั้งหมด</h2>
+    <div class="search-bar">
+      <label for="search">ค้นหาชื่อพระเครื่อง:</label>
+      <input type="text" id="search" oninput="filterAmulets()" placeholder="พิมพ์ชื่อพระ...">
+    </div>
     <div class="sort-bar">
       <label for="sort">เรียงตาม:</label>
       <select id="sort" onchange="changeSort(this.value)">
