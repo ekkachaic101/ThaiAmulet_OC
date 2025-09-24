@@ -3,37 +3,80 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>รายการพระเครื่อง - ThaiAmulet_OC</title>
+  <title>รายการพระเครื่องของฉัน</title>
   <link rel="stylesheet" href="style.css">
-  <script type="module" src="list.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://srzqmhgdaedfoyakqmpg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
+    );
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError || !userData.user) {
+        alert("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const userId = userData.user.id;
+      const name = userData.user.user_metadata?.preferred_username || userData.user.user_metadata?.email || "ผู้ใช้ไม่ทราบชื่อ";
+      document.getElementById("username").textContent = name;
+
+      const { data: amulets, error: fetchError } = await supabase
+        .from("amulets")
+        .select("name, price, description, image_url1, image_url2, image_url3, image_url4")
+        .eq("user_id", userId);
+
+      if (fetchError) {
+        console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", fetchError);
+        alert("ไม่สามารถโหลดข้อมูลได้");
+        return;
+      }
+
+      const listContainer = document.getElementById("amulet-list");
+      if (amulets.length === 0) {
+        listContainer.innerHTML = "<p>ยังไม่มีรายการพระเครื่อง</p>";
+        return;
+      }
+
+      amulets.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "amulet-item";
+        div.innerHTML = `
+          <h3>${item.name}</h3>
+          <p>ราคา: ${item.price}</p>
+          <p>รายละเอียด: ${item.description}</p>
+          ${item.image_url1 ? `<img src="${item.image_url1}" alt="ภาพด้านหน้า" width="150">` : ""}
+          ${item.image_url2 ? `<img src="${item.image_url2}" alt="ภาพด้านหลัง" width="150">` : ""}
+          ${item.image_url3 ? `<img src="${item.image_url3}" alt="ภาพด้านข้าง" width="150">` : ""}
+          ${item.image_url4 ? `<img src="${item.image_url4}" alt="ภาพเพิ่มเติม" width="150">` : ""}
+          <hr>
+        `;
+        listContainer.appendChild(div);
+      });
+    });
+  </script>
 </head>
 <body>
   <nav class="navbar">
     <ul>
-      <li><a href="index.html">🏠 หน้าแรก</a></li>
+      <li><a href="index.html">หน้าแรก</a></li>
       <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
       <li><a href="list.html">📋 รายการทั้งหมด</a></li>
       <li><a href="stats.html">📊 สถิติ</a></li>
-      <li><a href="#">🚪 ออกจากระบบ</a></li>
     </ul>
   </nav>
 
-  <div class="container">
-    <aside class="sidebar">
-      <h2>เมนูจัดการ</h2>
-      <ul>
-        <li><a href="add.html">➕ เพิ่มพระ</a></li>
-        <li><a href="list.html">📋 รายการทั้งหมด</a></li>
-        <li><a href="stats.html">📊 สถิติ</a></li>
-        <li><a href="#">🚪 ออกจากระบบ</a></li>
-      </ul>
-    </aside>
+  <div style="text-align:right; padding:10px;">
+    👤 <span id="username">กำลังโหลด...</span>
+  </div>
 
-    <main class="product-grid">
-      <h2>รายการพระเครื่องทั้งหมด</h2>
-      <div id="amulet-list" class="amulet-list"></div>
-    </main>
+  <div class="container">
+    <h2>รายการพระเครื่องของฉัน</h2>
+    <div id="amulet-list"></div>
   </div>
 </body>
 </html>
