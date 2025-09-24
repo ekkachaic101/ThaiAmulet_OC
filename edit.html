@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>แก้ไขข้อมูลพระเครื่อง</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #fffaf0;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background-color: #fff8dc;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    h2 {
+      color: #b58e00;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #f0c040;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #e0b030;
+    }
+  </style>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabase = createClient(
+      'https://srzqmhgdaedfoyakqmpg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
+    );
+
+    const params = new URLSearchParams(window.location.search);
+    const amuletId = params.get("id");
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!amuletId) {
+        alert("ไม่พบ ID ของพระเครื่อง");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("amulets")
+        .select("name, price, description, image_url1")
+        .eq("id", amuletId)
+        .single();
+
+      if (error || !data) {
+        alert("ไม่สามารถโหลดข้อมูลพระเครื่องได้");
+        console.error(error);
+        return;
+      }
+
+      document.getElementById("name").value = data.name;
+      document.getElementById("price").value = data.price;
+      document.getElementById("description").value = data.description;
+      document.getElementById("image_url1").value = data.image_url1;
+    });
+
+    window.saveChanges = async function() {
+      const name = document.getElementById("name").value;
+      const price = document.getElementById("price").value;
+      const description = document.getElementById("description").value;
+      const image_url1 = document.getElementById("image_url1").value;
+
+      const { error } = await supabase
+        .from("amulets")
+        .update({ name, price, description, image_url1 })
+        .eq("id", amuletId);
+
+      if (error) {
+        alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+        console.error(error);
+        return;
+      }
+
+      alert("บันทึกข้อมูลเรียบร้อยแล้ว");
+      window.location.href = "list.html";
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>แก้ไขข้อมูลพระเครื่อง</h2>
+    <label for="name">ชื่อพระเครื่อง:</label>
+    <input type="text" id="name">
+
+    <label for="price">ราคา:</label>
+    <input type="text" id="price">
+
+    <label for="description">รายละเอียด:</label>
+    <textarea id="description" rows="4"></textarea>
+
+    <label for="image_url1">ลิงก์รูปภาพ:</label>
+    <input type="text" id="image_url1">
+
+    <button onclick="saveChanges()">💾 บันทึกการแก้ไข</button>
+  </div>
+</body>
+</html>
