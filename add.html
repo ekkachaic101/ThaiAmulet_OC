@@ -50,41 +50,53 @@
 
     const supabase = createClient(
       'https://srzqmhgdaedfoyakqmpg.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
-    )
+      'public-anon-key'
+    );
+
+    let sessionToken = null;
+
+    async function getSessionToken() {
+      const { data, error } = await supabase.auth.getSession();
+      if (error || !data.session) {
+        alert("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+        window.location.href = "login.html";
+        return;
+      }
+      sessionToken = data.session.access_token;
+      const name = data.session.user.user_metadata?.preferred_username || data.session.user.user_metadata?.email || "ผู้ใช้ไม่ทราบชื่อ";
+      document.getElementById("username").textContent = name;
+    }
 
     async function uploadImage(file) {
-      if (!file) return null;
-      const fileName = `${Date.now()}_${file.name}`;
+      if (!file || !sessionToken) return null;
+      const filePath = `public/${Date.now()}_${file.name}`;
       const { data, error } = await supabase.storage
         .from("amulet-images")
-        .upload(fileName, file);
+        .upload(filePath, file, {
+          upsert: false,
+          headers: {
+            Authorization: `Bearer ${sessionToken}`
+          }
+        });
       if (error) {
         console.error("Upload error:", error);
         alert("❌ อัปโหลดภาพไม่สำเร็จ: " + error.message);
         return null;
       }
-      return `https://srzqmhgdaedfoyakqmpg.supabase.co/storage/v1/object/public/amulet-images/${fileName}`;
+      return `https://srzqmhgdaedfoyakqmpg.supabase.co/storage/v1/object/public/amulet-images/${filePath}`;
+    }
+
+    async function logout() {
+      const { error } = await supabase.auth.signOut();
+      if (!error) {
+        window.location.href = "index.html";
+      } else {
+        alert("เกิดข้อผิดพลาดในการออกจากระบบ: " + error.message);
+      }
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error || !user) {
-        alert("กรุณาเข้าสู่ระบบก่อนใช้งาน");
-        window.location.href = "login.html";
-        return;
-      }
-      const name = user.user_metadata?.preferred_username || user.user_metadata?.email || "ผู้ใช้ไม่ทราบชื่อ";
-      document.getElementById("username").textContent = name;
-
-      window.logout = async function () {
-        const { error } = await supabase.auth.signOut();
-        if (!error) {
-          window.location.href = "index.html";
-        } else {
-          alert("เกิดข้อผิดพลาดในการออกจากระบบ: " + error.message);
-        }
-      }
+      await getSessionToken();
 
       const form = document.getElementById("add-form");
       form.addEventListener("submit", async (e) => {
@@ -113,7 +125,11 @@
               image_url1: imageUrl,
               created_at: new Date().toISOString(),
             },
-          ]);
+          ], {
+            headers: {
+              Authorization: `Bearer ${sessionToken}`
+            }
+          });
 
           if (error) throw error;
 
@@ -137,6 +153,8 @@
           reader.readAsDataURL(file);
         }
       });
+
+      window.logout = logout;
     });
   </script>
 </head>
@@ -147,12 +165,12 @@
       <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
       <li><a href="list.html">รายการทั้งหมด</a></li>
       <li><a href="stats.html">สถิติ</a></li>
-      <li><a href="#" onclick="logout()"> ออกจากระบบ</a></li>
+      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
     </ul>
   </nav>
 
   <div style="text-align:right; padding:10px;">
-     <span id="username">กำลังโหลด...</span>
+    👤 <span id="username">กำลังโหลด...</span>
   </div>
 
   <div class="container">
