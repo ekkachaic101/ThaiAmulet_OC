@@ -30,18 +30,9 @@
       <input type="text" id="price" required>
       <label>รายละเอียด:</label>
       <textarea id="description" rows="4"></textarea>
-      <label>ภาพด้านที่ 1:</label>
+      <label>ภาพ:</label>
       <input type="file" id="image1" accept="image/*">
       <img id="preview1" class="preview">
-      <label>ภาพด้านที่ 2:</label>
-      <input type="file" id="image2" accept="image/*">
-      <img id="preview2" class="preview">
-      <label>ภาพด้านที่ 3:</label>
-      <input type="file" id="image3" accept="image/*">
-      <img id="preview3" class="preview">
-      <label>ภาพด้านที่ 4:</label>
-      <input type="file" id="image4" accept="image/*">
-      <img id="preview4" class="preview">
       <button type="submit">บันทึกข้อมูล</button>
     </form>
 
@@ -54,6 +45,7 @@
           <th>ราคา</th>
           <th>รายละเอียด</th>
           <th>ภาพทั้งหมด</th>
+          <th>จัดการ</th>
         </tr>
       </thead>
       <tbody id="amulet-table-body">
@@ -61,5 +53,87 @@
       </tbody>
     </table>
   </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://srzqmhgdaedfoyakqmpg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
+    );
+
+    async function loadTable() {
+      const { data, error } = await supabase
+        .from("amulets")
+        .select("id, name, price, description, image_url1, image_url2, image_url3, image_url4")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("โหลดข้อมูลผิดพลาด:", error);
+        return;
+      }
+
+      renderTable(data);
+    }
+
+    function renderTable(data) {
+      const tableBody = document.getElementById("amulet-table-body");
+      tableBody.innerHTML = "";
+      data.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>${item.price}</td>
+          <td>${item.description || '-'}</td>
+          <td>
+            ${item.image_url1 ? `<img src="${item.image_url1}" class="table-img">` : ""}
+            ${item.image_url2 ? `<img src="${item.image_url2}" class="table-img">` : ""}
+            ${item.image_url3 ? `<img src="${item.image_url3}" class="table-img">` : ""}
+            ${item.image_url4 ? `<img src="${item.image_url4}" class="table-img">` : ""}
+          </td>
+          <td>
+            <button onclick="editAmulet('${item.id}')">✏️ แก้ไข</button>
+            <button onclick="deleteAmulet('${item.id}')">🗑️ ลบ</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    document.getElementById("search").addEventListener("input", async (e) => {
+      const keyword = e.target.value.toLowerCase();
+      const { data, error } = await supabase
+        .from("amulets")
+        .select("id, name, price, description, image_url1, image_url2, image_url3, image_url4")
+        .order("created_at", { ascending: false });
+
+      if (error) return;
+
+      const filtered = data.filter(item =>
+        item.name.toLowerCase().includes(keyword)
+      );
+
+      renderTable(filtered);
+    });
+
+    function editAmulet(id) {
+      window.location.href = `edit.html?id=${id}`;
+    }
+
+    async function deleteAmulet(id) {
+      if (!confirm("คุณต้องการลบรายการนี้ใช่หรือไม่?")) return;
+      const { error } = await supabase.from("amulets").delete().eq("id", id);
+      if (error) {
+        alert("❌ ลบไม่สำเร็จ: " + error.message);
+      } else {
+        alert("✅ ลบเรียบร้อยแล้ว");
+        await loadTable();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      await loadTable();
+    });
+  </script>
 </body>
 </html>
