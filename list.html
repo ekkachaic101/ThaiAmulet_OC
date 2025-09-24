@@ -3,126 +3,87 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>รายการพระเครื่อง</title>
+  <title>รายการพระเครื่องทั้งหมด</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      font-family: sans-serif;
-      background-color: #f9f9f9;
-      margin: 0;
-      padding: 0;
-    }
-    #amulet-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      padding: 20px;
-    }
-    .amulet-card {
-      background: #fffbe6;
-      border: 1px solid #e0c060;
-      border-radius: 10px;
+    .amulet-item {
+      border: 1px solid #ccc;
       padding: 15px;
-      width: 100%;
-      max-width: 350px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      border-radius: 8px;
+      background-color: #fff8dc;
+      overflow: hidden;
     }
-    .amulet-card h3 {
-      font-size: 18px;
-      color: #b58e00;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-    .images img {
+    .amulet-item img {
+      display: block;
+      margin: 10px 0;
       max-width: 100%;
       height: auto;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+    }
+    .amulet-item p {
       margin: 5px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
     }
-    .actions {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }
-    .actions button {
-      padding: 5px 10px;
-      background-color: #f7d100;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .actions button:hover {
-      background-color: #e0b800;
+    .amulet-item h3 {
+      margin-top: 0;
     }
   </style>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://srzqmhgdaedfoyakqmpg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
+    );
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const { data: amulets, error } = await supabase
+        .from("amulets")
+        .select("name, price, description, image_url1, image_url2, image_url3, image_url4");
+
+      if (error) {
+        console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", error);
+        alert("ไม่สามารถโหลดข้อมูลได้");
+        return;
+      }
+
+      const listContainer = document.getElementById("amulet-list");
+      if (amulets.length === 0) {
+        listContainer.innerHTML = "<p>ยังไม่มีรายการพระเครื่อง</p>";
+        return;
+      }
+
+      amulets.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "amulet-item";
+        div.innerHTML = `
+          <h3>${item.name}</h3>
+          ${item.image_url1 ? `<img src="${item.image_url1}" alt="ภาพด้านหน้า">` : ""}
+          ${item.image_url2 ? `<img src="${item.image_url2}" alt="ภาพด้านหลัง">` : ""}
+          ${item.image_url3 ? `<img src="${item.image_url3}" alt="ภาพด้านข้าง">` : ""}
+          ${item.image_url4 ? `<img src="${item.image_url4}" alt="ภาพเพิ่มเติม">` : ""}
+          <p><strong>ราคา:</strong> ${item.price}</p>
+          <p><strong>รายละเอียด:</strong> ${item.description}</p>
+        `;
+        listContainer.appendChild(div);
+      });
+    });
+  </script>
 </head>
 <body>
-  <div id="amulet-list">กำลังโหลดข้อมูล...</div>
+  <nav class="navbar">
+    <ul>
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
+      <li><a href="list.html">📋 รายการทั้งหมด</a></li>
+      <li><a href="stats.html">📊 สถิติ</a></li>
+    </ul>
+  </nav>
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2";
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    async function loadAmulets() {
-      const { data, error } = await supabase.from("amulets").select("*");
-
-      const container = document.getElementById("amulet-list");
-      container.innerHTML = "";
-
-      if (error) {
-        container.innerHTML = `<p style="text-align:center;color:red;">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>`;
-        return;
-      }
-
-      if (data.length === 0) {
-        container.innerHTML = `<p style="text-align:center;">ไม่มีข้อมูลพระเครื่องในระบบ</p>`;
-        return;
-      }
-
-      data.forEach((amulet) => {
-        const card = document.createElement("div");
-        card.className = "amulet-card";
-        card.innerHTML = `
-          <h3>${amulet.name}</h3>
-          <div class="images">
-            ${amulet.image_url1 ? `<img src="${amulet.image_url1}">` : ""}
-            ${amulet.image_url2 ? `<img src="${amulet.image_url2}">` : ""}
-            ${amulet.image_url3 ? `<img src="${amulet.image_url3}">` : ""}
-            ${amulet.image_url4 ? `<img src="${amulet.image_url4}">` : ""}
-          </div>
-          <p><strong>ราคา:</strong> ${amulet.price}</p>
-          <p><strong>รายละเอียด:</strong> ${amulet.description}</p>
-          <p><strong>เวลา:</strong> ${new Date(amulet.created_at).toLocaleString()}</p>
-          <div class="actions">
-            <button onclick="editAmulet('${amulet.id}')">✏️ แก้ไข</button>
-            <button onclick="deleteAmulet('${amulet.id}')">🗑️ ลบ</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    async function deleteAmulet(id) {
-      if (!confirm("คุณต้องการลบพระเครื่องนี้ใช่หรือไม่?")) return;
-      const { error } = await supabase.from("amulets").delete().eq("id", id);
-      if (error) {
-        alert("เกิดข้อผิดพลาดในการลบ: " + error.message);
-      } else {
-        alert("✅ ลบสำเร็จแล้ว");
-        location.reload();
-      }
-    }
-
-    function editAmulet(id) {
-      alert("ฟังก์ชันแก้ไขยังไม่เปิดใช้งาน");
-    }
-
-    loadAmulets();
-  </script>
+  <div class="container">
+    <h2>รายการพระเครื่องทั้งหมด</h2>
+    <div id="amulet-list"></div>
+  </div>
 </body>
 </html>
