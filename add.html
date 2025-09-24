@@ -83,8 +83,17 @@
       }
     }
 
-    function editAmulet(id) {
-      alert("🛠️ ฟังก์ชันแก้ไขยังไม่พร้อมใช้งาน");
+    async function editAmulet(id) {
+      const { data, error } = await supabase.from("amulets").select("name, price, description").eq("id", id).single();
+      if (error || !data) {
+        alert("❌ ไม่สามารถโหลดข้อมูลเพื่อแก้ไข: " + error.message);
+        return;
+      }
+      document.getElementById("name").value = data.name;
+      document.getElementById("price").value = data.price;
+      document.getElementById("description").value = data.description;
+      document.getElementById("add-form").dataset.editId = id;
+      document.getElementById("submit-button").textContent = "อัปเดตข้อมูล";
     }
 
     async function loadTable() {
@@ -128,13 +137,29 @@
         const price = document.getElementById("price").value.trim();
         const description = document.getElementById("description").value.trim();
         const imageFile = document.getElementById("image1").files[0];
+        const editId = form.dataset.editId;
 
-        if (!name || !price || !imageFile) {
+        if (!name || !price || (!imageFile && !editId)) {
           alert("กรุณากรอกชื่อพระ, ราคา และเลือกรูปภาพ");
           return;
         }
 
         try {
+          if (editId) {
+            const { error } = await supabase.from("amulets").update({
+              name,
+              price,
+              description
+            }).eq("id", editId);
+            if (error) throw error;
+            alert("✅ อัปเดตข้อมูลเรียบร้อยแล้ว!");
+            form.reset();
+            delete form.dataset.editId;
+            document.getElementById("submit-button").textContent = "บันทึกข้อมูล";
+            await loadTable();
+            return;
+          }
+
           const imageUrl = await uploadImage(imageFile);
 
           const { error } = await supabase.from("amulets").insert([
@@ -207,7 +232,7 @@
       <label>ภาพ:</label>
       <input type="file" id="image1" accept="image/*">
       <img id="preview1" class="preview">
-      <button type="submit">บันทึกข้อมูล</button>
+      <button type="submit" id="submit-button">บันทึกข้อมูล</button>
     </form>
 
     <h3>รายการพระเครื่องที่อัปโหลดแล้ว</h3>
