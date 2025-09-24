@@ -3,8 +3,32 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>รายการพระเครื่องของฉัน</title>
+  <title>รายการพระเครื่องทั้งหมด</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .amulet-item {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      background-color: #fff8dc;
+      overflow: hidden;
+    }
+    .amulet-item img {
+      display: block;
+      margin: 10px 0;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+    }
+    .amulet-item p {
+      margin: 5px 0;
+    }
+    .amulet-item h3 {
+      margin-top: 0;
+    }
+  </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -14,24 +38,12 @@
     );
 
     document.addEventListener("DOMContentLoaded", async () => {
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      if (userError || !userData.user) {
-        alert("กรุณาเข้าสู่ระบบก่อนใช้งาน");
-        window.location.href = "login.html";
-        return;
-      }
-
-      const userId = userData.user.id;
-      const name = userData.user.user_metadata?.preferred_username || userData.user.user_metadata?.email || "ผู้ใช้ไม่ทราบชื่อ";
-      document.getElementById("username").textContent = name;
-
-      const { data: amulets, error: fetchError } = await supabase
+      const { data: amulets, error } = await supabase
         .from("amulets")
-        .select("name, price, description, image_url1, image_url2, image_url3, image_url4")
-        .eq("user_id", userId);
+        .select("name, price, description, image_url1, image_url2, image_url3, image_url4");
 
-      if (fetchError) {
-        console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", fetchError);
+      if (error) {
+        console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", error);
         alert("ไม่สามารถโหลดข้อมูลได้");
         return;
       }
@@ -47,13 +59,12 @@
         div.className = "amulet-item";
         div.innerHTML = `
           <h3>${item.name}</h3>
-          <p>ราคา: ${item.price}</p>
-          <p>รายละเอียด: ${item.description}</p>
-          ${item.image_url1 ? `<img src="${item.image_url1}" alt="ภาพด้านหน้า" width="150">` : ""}
-          ${item.image_url2 ? `<img src="${item.image_url2}" alt="ภาพด้านหลัง" width="150">` : ""}
-          ${item.image_url3 ? `<img src="${item.image_url3}" alt="ภาพด้านข้าง" width="150">` : ""}
-          ${item.image_url4 ? `<img src="${item.image_url4}" alt="ภาพเพิ่มเติม" width="150">` : ""}
-          <hr>
+          ${item.image_url1 ? `<img src="${item.image_url1}" alt="ภาพด้านหน้า">` : ""}
+          ${item.image_url2 ? `<img src="${item.image_url2}" alt="ภาพด้านหลัง">` : ""}
+          ${item.image_url3 ? `<img src="${item.image_url3}" alt="ภาพด้านข้าง">` : ""}
+          ${item.image_url4 ? `<img src="${item.image_url4}" alt="ภาพเพิ่มเติม">` : ""}
+          <p><strong>ราคา:</strong> ${item.price}</p>
+          <p><strong>รายละเอียด:</strong> ${item.description}</p>
         `;
         listContainer.appendChild(div);
       });
@@ -70,12 +81,8 @@
     </ul>
   </nav>
 
-  <div style="text-align:right; padding:10px;">
-    👤 <span id="username">กำลังโหลด...</span>
-  </div>
-
   <div class="container">
-    <h2>รายการพระเครื่องของฉัน</h2>
+    <h2>รายการพระเครื่องทั้งหมด</h2>
     <div id="amulet-list"></div>
   </div>
 </body>
