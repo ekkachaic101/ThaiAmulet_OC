@@ -167,8 +167,8 @@
         const description = document.getElementById("description").value.trim();
         const imageFile = document.getElementById("image1").files[0];
 
-        if (!name || !price ||!description||!imageFile) {
-          alert("กรุณากรอกชื่อพระ, ราคา,รายละเอียด และเลือกรูปภาพ");
+        if (!name || !price || !imageFile) {
+          alert("กรุณากรอกชื่อพระ, ราคา และเลือกรูปภาพ");
           return;
         }
 
@@ -254,7 +254,6 @@
         <tr>
           <th>ชื่อพระ</th>
           <th>ราคา</th>
-          <th>รายละเอียด</th>
           <th>ภาพ</th>
         </tr>
       </thead>
