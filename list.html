@@ -6,30 +6,9 @@
   <title>รายการพระเครื่องทั้งหมด</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .amulet-item {
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      background-color: #fff8dc;
-      overflow: hidden;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .amulet-item img {
-      display: block;
-      margin: 10px auto;
-      max-width: 100%;
-      height: auto;
-      border: 1px solid #aaa;
-      border-radius: 4px;
-    }
-    .amulet-item p {
-      margin: 5px 0;
-    }
-    .amulet-item h3 {
-      margin-top: 0;
-      text-align: center;
-      color: #b58e00;
+    body {
+      font-family: sans-serif;
+      background-color: #fffaf0;
     }
     .container {
       max-width: 1200px;
@@ -56,6 +35,35 @@
     .sort-bar {
       text-align: right;
       margin-bottom: 10px;
+    }
+    #amulet-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .amulet-item {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #fff8dc;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .amulet-item img {
+      width: 120px;
+      height: auto;
+      margin: 10px auto;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      object-fit: cover;
+    }
+    .amulet-item h3 {
+      margin-top: 0;
+      color: #b58e00;
+    }
+    .amulet-item p {
+      margin: 5px 0;
     }
   </style>
   <script type="module">
@@ -125,8 +133,8 @@
     <ul>
       <li><a href="index.html">หน้าแรก</a></li>
       <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
-      <li><a href="list.html"> รายการทั้งหมด</a></li>
-      <li><a href="stats.html"> สถิติ</a></li>
+      <li><a href="list.html">📜 รายการทั้งหมด</a></li>
+      <li><a href="stats.html">📊 สถิติ</a></li>
     </ul>
   </nav>
 
