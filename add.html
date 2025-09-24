@@ -130,10 +130,25 @@
       }
     }
 
+    async function deleteAmulet(id) {
+      if (!confirm("คุณต้องการลบพระเครื่องนี้ใช่หรือไม่?")) return;
+      const { error } = await supabase.from("amulets").delete().eq("id", id);
+      if (error) {
+        alert("❌ ลบไม่สำเร็จ: " + error.message);
+      } else {
+        alert("✅ ลบสำเร็จแล้ว");
+        await loadTable();
+      }
+    }
+
+    function editAmulet(id) {
+      alert("🛠️ ฟังก์ชันแก้ไขยังไม่พร้อมใช้งาน");
+    }
+
     async function loadTable() {
       const { data, error } = await supabase
         .from("amulets")
-        .select("name, price, description, image_url1")
+        .select("id, name, price, description, image_url1")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -150,6 +165,10 @@
           <td>${item.price}</td>
           <td>${item.description || "-"}</td>
           <td>${item.image_url1 ? `<img src="${item.image_url1}" class="table-img">` : ""}</td>
+          <td>
+            <button onclick="editAmulet('${item.id}')">✏️ แก้ไข</button>
+            <button onclick="deleteAmulet('${item.id}')">🗑️ ลบ</button>
+          </td>
         `;
         tableBody.appendChild(row);
       });
@@ -257,6 +276,7 @@
           <th>ราคา</th>
           <th>รายละเอียด</th>
           <th>ภาพ</th>
+          <th>การจัดการ</th>
         </tr>
       </thead>
       <tbody id="amulet-table-body">
