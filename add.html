@@ -6,74 +6,18 @@
   <title>เพิ่มพระเครื่อง</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      font-family: sans-serif;
-      background-color: #fffaf0;
-    }
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-    }
-    form {
-      background-color: #fff8dc;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      background-color: #f0c040;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button:hover {
-      background-color: #e0b030;
-    }
-    .preview {
-      margin-top: 10px;
-      max-width: 150px;
-      border-radius: 6px;
-      border: 1px solid #aaa;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 30px;
-      background-color: #fff8dc;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background-color: #f0e68c;
-    }
-    img.table-img {
-      width: 80px;
-      height: auto;
-      border-radius: 6px;
-      border: 1px solid #aaa;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      object-fit: cover;
-    }
+    body { font-family: sans-serif; background-color: #fffaf0; }
+    .container { max-width: 1000px; margin: auto; padding: 20px; }
+    form { background-color: #fff8dc; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    button { margin-top: 15px; padding: 10px 20px; background-color: #f0c040; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    button:hover { background-color: #e0b030; }
+    .preview { margin-top: 10px; max-width: 150px; border-radius: 6px; border: 1px solid #aaa; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    table { width: 100%; border-collapse: collapse; margin-top: 30px; background-color: #fff8dc; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background-color: #f0e68c; }
+    img.table-img { width: 80px; height: auto; border-radius: 6px; border: 1px solid #aaa; box-shadow: 0 2px 4px rgba(0,0,0,0.2); object-fit: cover; }
   </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
@@ -109,9 +53,7 @@
         .from("amulet-images")
         .upload(filePath, file, {
           upsert: false,
-          headers: {
-            Authorization: `Bearer ${sessionToken}`
-          }
+          headers: { Authorization: `Bearer ${sessionToken}` }
         });
       if (error) {
         console.error("Upload error:", error);
@@ -166,8 +108,8 @@
           <td>${item.description || "-"}</td>
           <td>${item.image_url1 ? `<img src="${item.image_url1}" class="table-img">` : ""}</td>
           <td>
-            <button onclick="editAmulet('${item.id}')">✏️ แก้ไข</button>
-            <button onclick="deleteAmulet('${item.id}')">🗑️ ลบ</button>
+            <button onclick="window.editAmulet('${item.id}')">✏️ แก้ไข</button>
+            <button onclick="window.deleteAmulet('${item.id}')">🗑️ ลบ</button>
           </td>
         `;
         tableBody.appendChild(row);
@@ -205,9 +147,7 @@
               user_id: userId
             },
           ], {
-            headers: {
-              Authorization: `Bearer ${sessionToken}`
-            }
+            headers: { Authorization: `Bearer ${sessionToken}` }
           });
 
           if (error) throw error;
@@ -235,6 +175,8 @@
       });
 
       window.logout = logout;
+      window.editAmulet = editAmulet;
+      window.deleteAmulet = deleteAmulet;
     });
   </script>
 </head>
