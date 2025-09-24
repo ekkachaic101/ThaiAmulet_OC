@@ -55,15 +55,18 @@
 
     let sessionToken = null;
 
-    async function getSessionToken() {
-      const { data, error } = await supabase.auth.getSession();
-      if (error || !data.session) {
+    async function initializeUser() {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+      if (userError || !userData.user || sessionError || !sessionData.session) {
         alert("กรุณาเข้าสู่ระบบก่อนใช้งาน");
         window.location.href = "login.html";
         return;
       }
-      sessionToken = data.session.access_token;
-      const name = data.session.user.user_metadata?.preferred_username || data.session.user.user_metadata?.email || "ผู้ใช้ไม่ทราบชื่อ";
+
+      sessionToken = sessionData.session.access_token;
+      const name = userData.user.user_metadata?.preferred_username || userData.user.user_metadata?.email || "ผู้ใช้ไม่ทราบชื่อ";
       document.getElementById("username").textContent = name;
     }
 
@@ -96,12 +99,12 @@
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
-      await getSessionToken();
+      await initializeUser();
 
       const form = document.getElementById("add-form");
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        console.log("📌 เริ่มการ submit");
+        console.log(" เริ่มการ submit");
 
         const name = document.getElementById("name").value.trim();
         const price = document.getElementById("price").value.trim();
@@ -165,12 +168,12 @@
       <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
       <li><a href="list.html">รายการทั้งหมด</a></li>
       <li><a href="stats.html">สถิติ</a></li>
-      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+      <li><a href="#" onclick="logout()"> ออกจากระบบ</a></li>
     </ul>
   </nav>
 
   <div style="text-align:right; padding:10px;">
-    👤 <span id="username">กำลังโหลด...</span>
+     <span id="username">กำลังโหลด...</span>
   </div>
 
   <div class="container">
