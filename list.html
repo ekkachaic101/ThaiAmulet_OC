@@ -53,6 +53,10 @@
     .navbar ul li a:hover {
       color: #000;
     }
+    .sort-bar {
+      text-align: right;
+      margin-bottom: 10px;
+    }
   </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
@@ -62,10 +66,12 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
     );
 
+    let amulets = [];
+
     document.addEventListener("DOMContentLoaded", async () => {
-      const { data: amulets, error } = await supabase
+      const { data, error } = await supabase
         .from("amulets")
-        .select("name, price, description, image_url1, image_url2, image_url3, image_url4");
+        .select("name, price, description, image_url1, image_url2, image_url3, image_url4, created_at");
 
       if (error) {
         console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", error);
@@ -73,13 +79,27 @@
         return;
       }
 
+      amulets = data;
+      renderAmulets();
+    });
+
+    function renderAmulets(sortBy = "created_at") {
       const listContainer = document.getElementById("amulet-list");
+      listContainer.innerHTML = "";
+
       if (amulets.length === 0) {
         listContainer.innerHTML = "<p>ยังไม่มีรายการพระเครื่อง</p>";
         return;
       }
 
-      amulets.forEach(item => {
+      const sorted = [...amulets];
+      sorted.sort((a, b) => {
+        if (sortBy === "name") return a.name.localeCompare(b.name);
+        if (sortBy === "price") return parseFloat(a.price) - parseFloat(b.price);
+        if (sortBy === "created_at") return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      sorted.forEach(item => {
         const div = document.createElement("div");
         div.className = "amulet-item";
         div.innerHTML = `
@@ -93,7 +113,11 @@
         `;
         listContainer.appendChild(div);
       });
-    });
+    }
+
+    window.changeSort = function(value) {
+      renderAmulets(value);
+    }
   </script>
 </head>
 <body>
@@ -101,13 +125,21 @@
     <ul>
       <li><a href="index.html">หน้าแรก</a></li>
       <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
-      <li><a href="list.html">📋 รายการทั้งหมด</a></li>
-      <li><a href="stats.html">📊 สถิติ</a></li>
+      <li><a href="list.html"> รายการทั้งหมด</a></li>
+      <li><a href="stats.html"> สถิติ</a></li>
     </ul>
   </nav>
 
   <div class="container">
     <h2>รายการพระเครื่องทั้งหมด</h2>
+    <div class="sort-bar">
+      <label for="sort">เรียงตาม:</label>
+      <select id="sort" onchange="changeSort(this.value)">
+        <option value="created_at">ล่าสุด</option>
+        <option value="name">ชื่อ</option>
+        <option value="price">ราคา</option>
+      </select>
+    </div>
     <div id="amulet-list"></div>
   </div>
 </body>
