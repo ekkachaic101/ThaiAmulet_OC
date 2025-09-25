@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -7,164 +8,61 @@
     body {
       font-family: sans-serif;
       background-color: #fffaf0;
-    }
-    .container {
-      max-width: 1200px;
-      margin: auto;
+      margin: 0;
       padding: 20px;
     }
-    .navbar ul {
-      list-style: none;
-      padding: 0;
-      display: flex;
-      gap: 15px;
-      background-color: #f0e68c;
-      margin: 0;
-      padding: 10px;
-    }
-    .navbar ul li a {
-      text-decoration: none;
-      color: #333;
-      font-weight: bold;
-    }
-    .navbar ul li a:hover {
-      color: #000;
-    }
-    .sort-bar, .search-bar {
-      margin: 10px 0 20px;
-      text-align: left;
-    }
-    .search-bar input {
-      padding: 8px;
-      width: 300px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    #amulet-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-    }
     .amulet-item {
-      border: 1px solid #ccc;
-      padding: 15px;
-      border-radius: 8px;
+      max-width: 600px;
+      margin: auto;
       background-color: #fff8dc;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       text-align: center;
     }
-    .amulet-item img {
-      width: 120px;
+    .main-image {
+      width: 300px;
       height: auto;
-      margin: 10px auto;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      margin-bottom: 15px;
+    }
+    .thumbnail-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .thumbnail-container img {
+      width: 80px;
+      height: auto;
       border: 1px solid #aaa;
       border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      object-fit: cover;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
     }
-    .amulet-item h3 {
-      margin-top: 0;
-      color: #b58e00;
-    }
-    .amulet-item p {
-      margin: 5px 0;
+    .thumbnail-container img:hover {
+      transform: scale(1.1);
     }
   </style>
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-    const supabase = createClient(
-      'https://srzqmhgdaedfoyakqmpg.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
-    );
-
-    let amulets = [];
-    let filteredAmulets = [];
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      const { data, error } = await supabase
-        .from("amulets")
-        .select("id, name, price, description, image_url1, image_url2, image_url3, image_url4, created_at");
-
-      if (error) {
-        console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", error);
-        alert("ไม่สามารถโหลดข้อมูลได้");
-        return;
-      }
-
-      amulets = data;
-      filteredAmulets = [...amulets];
-      renderAmulets();
-    });
-
-    function renderAmulets(sortBy = "created_at") {
-      const listContainer = document.getElementById("amulet-list");
-      listContainer.innerHTML = "";
-
-      if (filteredAmulets.length === 0) {
-        listContainer.innerHTML = "<p>ไม่พบรายการพระเครื่อง</p>";
-        return;
-      }
-
-      const sorted = [...filteredAmulets];
-      sorted.sort((a, b) => {
-        if (sortBy === "name") return a.name.localeCompare(b.name);
-        if (sortBy === "price") return parseFloat(a.price) - parseFloat(b.price);
-        if (sortBy === "created_at") return new Date(b.created_at) - new Date(a.created_at);
-      });
-
-      sorted.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "amulet-item";
-        div.innerHTML = `
-          <h3>${item.name}</h3>
-          ${item.image_url1 ? `<img src="${item.image_url1}" alt="ภาพด้านหน้า">` : ""}
-          ${item.image_url2 ? `<img src="${item.image_url2}" alt="ภาพด้านหลัง">` : ""}
-          ${item.image_url3 ? `<img src="${item.image_url3}" alt="ภาพด้านข้าง">` : ""}
-          ${item.image_url4 ? `<img src="${item.image_url4}" alt="ภาพเพิ่มเติม">` : ""}
-          <p><strong>ราคา:</strong> ${item.price}</p>
-          <p><strong>รายละเอียด:</strong> ${item.description}</p>
-        `;
-        listContainer.appendChild(div);
-      });
-    }
-
-    window.changeSort = function(value) {
-      renderAmulets(value);
-    }
-
-    window.filterAmulets = function() {
-      const keyword = document.getElementById("search").value.toLowerCase();
-      filteredAmulets = amulets.filter(item => item.name.toLowerCase().includes(keyword));
-      renderAmulets(document.getElementById("sort").value);
-    }
-  </script>
 </head>
 <body>
-  <nav class="navbar">
-    <ul>
-      <li><a href="index.html">หน้าแรก</a></li>
-      <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
-      <li><a href="list.html">📄 รายการทั้งหมด</a></li>
-      <li><a href="stats.html">📊 สถิติ</a></li>
-    </ul>
-  </nav>
-
-  <div class="container">
-    <h2>รายการพระเครื่องทั้งหมด</h2>
-    <div class="search-bar">
-      <label for="search">ค้นหาชื่อพระเครื่อง:</label>
-      <input type="text" id="search" oninput="filterAmulets()" placeholder="พิมพ์ชื่อพระ...">
+  <div class="amulet-item">
+    <h2>พระเครื่องตัวอย่าง</h2>
+    <img id="mainImage" src="image.png" alt="ภาพใหญ่" class="main-image">
+    <div class="thumbnail-container">
+      <img src="image.png" alt="ภาพเล็ก 1" onclick="changeImage(this.src)">
+      <img src="image.png" alt="ภาพเล็ก 2" onclick="changeImage(this.src)">
+      <img src="image.png" alt="ภาพเล็ก 3" onclick="changeImage(this.src)">
     </div>
-    <div class="sort-bar">
-      <label for="sort">เรียงตาม:</label>
-      <select id="sort" onchange="changeSort(this.value)">
-        <option value="created_at">ล่าสุด</option>
-        <option value="name">ชื่อ</option>
-        <option value="price">ราคา</option>
-      </select>
-    </div>
-    <div id="amulet-list"></div>
   </div>
+
+  <script>
+    function changeImage(src) {
+      document.getElementById("mainImage").src = src;
+    }
+  </script>
 </body>
 </html>
