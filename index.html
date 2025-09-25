@@ -76,7 +76,7 @@
     document.addEventListener("DOMContentLoaded", async () => {
       const { data, error } = await supabase
         .from("amulets")
-        .select("name, price, image_url1")
+        .select("id, name, price, image_url1")
         .order("created_at", { ascending: false })
         .limit(20);
 
@@ -90,8 +90,10 @@
         const card = document.createElement("div");
         card.className = "amulet-card";
         card.innerHTML = `
+          <a href="detail.html?id=${item.id}">
+            ${item.image_url1 ? `<img src="${item.image_url1}" alt="${item.name}">` : ""}
+          </a>
           <h3>${item.name}</h3>
-          ${item.image_url1 ? `<img src="${item.image_url1}" alt="${item.name}">` : ""}
           <p><strong>ราคา:</strong> ${item.price}</p>
         `;
         grid.appendChild(card);
