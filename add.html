@@ -1,56 +1,167 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <title>เพิ่มพระเครื่อง</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body { font-family: sans-serif; background-color: #fffaf0; }
+    .container { max-width: 1000px; margin: auto; padding: 20px; }
+    form { background-color: #fff8dc; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    button { margin-top: 15px; padding: 10px 20px; background-color: #f0c040; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    button:hover { background-color: #e0b030; }
+    .preview { margin-top: 10px; max-width: 150px; border-radius: 6px; border: 1px solid #aaa; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  </style>
 </head>
 <body>
-  <h2>เพิ่มพระเครื่อง</h2>
-  <form id="amulet-form">
-    <label>ชื่อพระ:</label><br>
-    <input type="text" id="name" required><br><br>
+  <div class="container">
+    <h2>เพิ่มพระเครื่อง</h2>
+    <form id="add-form">
+      <label>ชื่อพระเครื่อง:</label>
+      <input type="text" id="name" required>
 
-    <label>ราคา:</label><br>
-    <input type="number" id="price" required><br><br>
+      <label>ราคา:</label>
+      <input type="text" id="price" required>
 
-    <label>รายละเอียด:</label><br>
-    <textarea id="description"></textarea><br><br>
+      <label>รายละเอียด:</label>
+      <textarea id="description" rows="4"></textarea>
 
-    <label>ภาพที่ 1:</label><br>
-    <input type="file" id="image1"><br><br>
+      <label>ภาพด้านหน้า:</label>
+      <input type="file" id="image1" accept="image/*">
+      <img id="preview1" class="preview">
 
-    <label>ภาพที่ 2:</label><br>
-    <input type="file" id="image2"><br><br>
+      <label>ภาพด้านหลัง:</label>
+      <input type="file" id="image2" accept="image/*">
+      <img id="preview2" class="preview">
 
-    <label>ภาพที่ 3:</label><br>
-    <input type="file" id="image3"><br><br>
+      <label>ภาพด้านข้าง:</label>
+      <input type="file" id="image3" accept="image/*">
+      <img id="preview3" class="preview">
 
-    <label>ภาพที่ 4:</label><br>
-    <input type="file" id="image4"><br><br>
+      <label>ภาพด้านล่าง:</label>
+      <input type="file" id="image4" accept="image/*">
+      <img id="preview4" class="preview">
 
-    <button type="submit">บันทึก</button>
-  </form>
+      <button type="submit" id="submit-button">บันทึกข้อมูล</button>
+    </form>
+  </div>
 
-  <hr>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-  <h3>รายการพระเครื่องที่อัปโหลดแล้ว</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>ชื่อพระ</th>
-        <th>ราคา</th>
-        <th>รายละเอียด</th>
-        <th>ภาพ</th>
-        <th>การจัดการ</th>
-      </tr>
-    </thead>
-    <tbody id="amulet-table-body">
-      <!-- แสดงผลด้วย JS -->
-    </tbody>
-  </table>
+    const supabase = createClient(
+      'https://srzqmhgdaedfoyakqmpg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
+    );
 
-  <script type="module" src="script.js"></script>
+    let sessionToken = null;
+    let userId = null;
+
+    async function initializeUser() {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+      if (userError || !userData.user || sessionError || !sessionData.session) {
+        alert("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+        window.location.href = "login.html";
+        return;
+      }
+
+      sessionToken = sessionData.session.access_token;
+      userId = userData.user.id;
+    }
+
+    async function uploadImage(file) {
+      if (!file || !sessionToken) return null;
+      const filePath = `public/${Date.now()}_${file.name}`;
+      const { data, error } = await supabase.storage
+        .from("amulet-images")
+        .upload(filePath, file, {
+          upsert: false,
+          headers: { Authorization: `Bearer ${sessionToken}` }
+        });
+      if (error) {
+        console.error("Upload error:", error);
+        alert("❌ อัปโหลดภาพไม่สำเร็จ: " + error.message);
+        return null;
+      }
+      return `https://srzqmhgdaedfoyakqmpg.supabase.co/storage/v1/object/public/amulet-images/${filePath}`;
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      await initializeUser();
+
+      const form = document.getElementById("add-form");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value.trim();
+        const price = document.getElementById("price").value.trim();
+        const description = document.getElementById("description").value.trim();
+        const imageFile1 = document.getElementById("image1").files[0];
+        const imageFile2 = document.getElementById("image2").files[0];
+        const imageFile3 = document.getElementById("image3").files[0];
+        const imageFile4 = document.getElementById("image4").files[0];
+
+        if (!name || !price || !imageFile1) {
+          alert("กรุณากรอกชื่อพระ, ราคา และเลือกรูปภาพด้านหน้า");
+          return;
+        }
+
+        try {
+          const imageUrl1 = await uploadImage(imageFile1);
+          const imageUrl2 = await uploadImage(imageFile2);
+          const imageUrl3 = await uploadImage(imageFile3);
+          const imageUrl4 = await uploadImage(imageFile4);
+
+          const { error } = await supabase.from("amulets").insert([
+            {
+              name,
+              price,
+              description,
+              image_url1: imageUrl1,
+              image_url2: imageUrl2,
+              image_url3: imageUrl3,
+              image_url4: imageUrl4,
+              created_at: new Date().toISOString(),
+              user_id: userId
+            },
+          ], {
+            headers: { Authorization: `Bearer ${sessionToken}` }
+          });
+
+          if (error) throw error;
+
+          alert("✅ บันทึกสำเร็จแล้ว!");
+          form.reset();
+          document.getElementById("preview1").src = "";
+          document.getElementById("preview2").src = "";
+          document.getElementById("preview3").src = "";
+          document.getElementById("preview4").src = "";
+
+        } catch (err) {
+          console.error("❌ เกิดข้อผิดพลาด:", err);
+          alert("❌ เกิดข้อผิดพลาด: " + err.message);
+        }
+      });
+
+      // แสดงตัวอย่างภาพเมื่อเลือกไฟล์
+      ["image1", "image2", "image3", "image4"].forEach((id, index) => {
+        document.getElementById(id).addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+              document.getElementById("preview" + (index + 1)).src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
