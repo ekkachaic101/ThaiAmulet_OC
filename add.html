@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -15,10 +14,212 @@
     button:hover { background-color: #e0b030; }
     .preview { margin-top: 10px; max-width: 150px; border-radius: 6px; border: 1px solid #aaa; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     table { width: 100%; border-collapse: collapse; margin-top: 30px; background-color: #fff8dc; }
-    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; vertical-align: middle; }
     th { background-color: #f0e68c; }
     img.table-img { width: 80px; height: auto; border-radius: 6px; border: 1px solid #aaa; box-shadow: 0 2px 4px rgba(0,0,0,0.2); object-fit: cover; }
   </style>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://srzqmhgdaedfoyakqmpg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
+    );
+
+    let sessionToken = null;
+    let userId = null;
+
+    async function initializeUser() {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+      if (userError || !userData.user || sessionError || !sessionData.session) {
+        alert("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+        window.location.href = "login.html";
+        return;
+      }
+
+      sessionToken = sessionData.session.access_token;
+      userId = userData.user.id;
+      const name = userData.user.user_metadata?.preferred_username || userData.user.user_metadata?.email || "ผู้ใช้ไม่ทราบชื่อ";
+      document.getElementById("username").textContent = name;
+    }
+
+    async function uploadImage(file) {
+      if (!file || !sessionToken) return null;
+      const filePath = `public/${Date.now()}_${file.name}`;
+      const { data, error } = await supabase.storage
+        .from("amulet-images")
+        .upload(filePath, file, {
+          upsert: false,
+          headers: { Authorization: `Bearer ${sessionToken}` }
+        });
+      if (error) {
+        console.error("Upload error:", error);
+        alert("❌ อัปโหลดภาพไม่สำเร็จ: " + error.message);
+        return null;
+      }
+      return `https://srzqmhgdaedfoyakqmpg.supabase.co/storage/v1/object/public/amulet-images/${filePath}`;
+    }
+
+    async function logout() {
+      const { error } = await supabase.auth.signOut();
+      if (!error) {
+        window.location.href = "index.html";
+      } else {
+        alert("เกิดข้อผิดพลาดในการออกจากระบบ: " + error.message);
+      }
+    }
+
+    async function deleteAmulet(id) {
+      if (!confirm("คุณต้องการลบพระเครื่องนี้ใช่หรือไม่?")) return;
+      const { error } = await supabase.from("amulets").delete().eq("id", id);
+      if (error) {
+        alert("❌ ลบไม่สำเร็จ: " + error.message);
+      } else {
+        alert("✅ ลบสำเร็จแล้ว");
+        await loadTable();
+      }
+    }
+
+    async function editAmulet(id) {
+      const { data, error } = await supabase.from("amulets").select("name, price, description").eq("id", id).single();
+      if (error || !data) {
+        alert("❌ ไม่สามารถโหลดข้อมูลเพื่อแก้ไข: " + error.message);
+        return;
+      }
+      document.getElementById("name").value = data.name;
+      document.getElementById("price").value = data.price;
+      document.getElementById("description").value = data.description;
+      document.getElementById("add-form").dataset.editId = id;
+      document.getElementById("submit-button").textContent = "อัปเดตข้อมูล";
+    }
+
+    async function loadTable() {
+      const { data, error } = await supabase
+        .from("amulets")
+        .select("id, name, price, description, image_url1, image_url2, image_url3, image_url4")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("โหลดข้อมูลตารางผิดพลาด:", error);
+        return;
+      }
+
+      const tableBody = document.getElementById("amulet-table-body");
+      tableBody.innerHTML = "";
+      data.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>${item.price}</td>
+          <td>${item.description || "-"}</td>
+          <td>${item.image_url1 ? `<img src="${item.image_url1}" class="table-img">` : ""}</td>
+          <td>${item.image_url2 ? `<img src="${item.image_url2}" class="table-img">` : ""}</td>
+          <td>${item.image_url3 ? `<img src="${item.image_url3}" class="table-img">` : ""}</td>
+          <td>${item.image_url4 ? `<img src="${item.image_url4}" class="table-img">` : ""}</td>
+          <td>
+            <button onclick="window.editAmulet('${item.id}')">✏️ แก้ไข</button>
+            <button onclick="window.deleteAmulet('${item.id}')">🗑️ ลบ</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      await initializeUser();
+      await loadTable();
+
+      const form = document.getElementById("add-form");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value.trim();
+        const price = document.getElementById("price").value.trim();
+        const description = document.getElementById("description").value.trim();
+        const imageFile1 = document.getElementById("image1").files[0];
+        const imageFile2 = document.getElementById("image2").files[0];
+        const imageFile3 = document.getElementById("image3").files[0];
+        const imageFile4 = document.getElementById("image4").files[0];
+        const editId = form.dataset.editId;
+
+        if (!name || !price || (!imageFile1 && !editId)) {
+          alert("กรุณากรอกชื่อพระ, ราคา และเลือกรูปภาพ");
+          return;
+        }
+
+        try {
+          if (editId) {
+            const { error } = await supabase.from("amulets").update({
+              name,
+              price,
+              description
+            }).eq("id", editId);
+            if (error) throw error;
+            alert("✅ อัปเดตข้อมูลเรียบร้อยแล้ว!");
+            form.reset();
+            delete form.dataset.editId;
+            document.getElementById("submit-button").textContent = "บันทึกข้อมูล";
+            await loadTable();
+            return;
+          }
+
+          const imageUrl1 = await uploadImage(imageFile1);
+          const imageUrl2 = await uploadImage(imageFile2);
+          const imageUrl3 = await uploadImage(imageFile3);
+          const imageUrl4 = await uploadImage(imageFile4);
+
+          const { error } = await supabase.from("amulets").insert([
+            {
+              name,
+              price,
+              description,
+              image_url1: imageUrl1,
+              image_url2: imageUrl2,
+              image_url3: imageUrl3,
+              image_url4: imageUrl4,
+              created_at: new Date().toISOString(),
+              user_id: userId
+            },
+          ], {
+            headers: { Authorization: `Bearer ${sessionToken}` }
+          });
+
+          if (error) throw error;
+
+          alert("✅ บันทึกสำเร็จแล้ว!");
+          form.reset();
+          document.getElementById("preview1").src = "";
+          document.getElementById("preview2").src = "";
+          document.getElementById("preview3").src = "";
+          document.getElementById("preview4").src = "";
+          await loadTable();
+
+        } catch (err) {
+          console.error("❌ เกิดข้อผิดพลาด:", err);
+          alert("❌ เกิดข้อผิดพลาด: " + err.message);
+        }
+      });
+
+      ["image1", "image2", "image3", "image4"].forEach((id, index) => {
+        document.getElementById(id).addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+              document.getElementById(`preview${index + 1}`).src = reader.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      });
+
+      window.logout = logout;
+      window.editAmulet = editAmulet;
+      window.deleteAmulet = deleteAmulet;
+    });
+  </script>
 </head>
 <body>
   <nav class="navbar">
@@ -30,7 +231,7 @@
       <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
     </ul>
   </nav>
-  <div style="text-align:right; padding:10px;"> 👤 <span id="username">กำลังโหลด...</span> </div>
+  <div style="text-align:right; padding:10px;">👤 <span id="username">กำลังโหลด...</span></div>
   <div class="container">
     <h2>เพิ่มพระเครื่อง</h2>
     <form id="add-form">
