@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -45,7 +46,7 @@
     }
     #amulet-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 20px;
     }
     .amulet-item {
@@ -55,18 +56,9 @@
       background-color: #fff8dc;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       text-align: center;
-      transition: transform 0.2s;
-    }
-    .amulet-item:hover {
-      transform: scale(1.02);
-    }
-    .amulet-item a {
-      text-decoration: none;
-      color: inherit;
     }
     .main-image {
-      width: 100%;
-      max-width: 200px;
+      width: 200px;
       height: auto;
       margin: 10px auto;
       border: 1px solid #aaa;
@@ -75,13 +67,11 @@
       object-fit: cover;
     }
     .amulet-item h3 {
-      margin-top: 10px;
+      margin-top: 0;
       color: #b58e00;
-      font-size: 18px;
     }
     .amulet-item p {
       margin: 5px 0;
-      font-size: 16px;
     }
   </style>
   <script type="module">
