@@ -1,6 +1,11 @@
+
 body {
   font-family: 'Sarabun', sans-serif;
-  background: linear-gradient(to bottom, #fffbe6, #fff5cc);
+  background-image: url('jpeg.jpg');
+  background-size: cover;
+  background-repeat: repeat;
+  background-attachment: fixed;
+  background-position: center;
   margin: 0;
   padding: 0;
   color: #4b2e00;
@@ -100,9 +105,10 @@ button:hover {
   gap: 20px;
   padding: 20px;
   flex-grow: 1;
-  background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/3f/Kranok_pattern_gold.png');
+  background-image: url('jpeg.jpg');
   background-size: cover;
   background-repeat: repeat;
+  background-position: center;
 }
 .product-card {
   background-color: rgba(255, 255, 255, 0.95);
