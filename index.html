@@ -2,115 +2,11 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>รายละเอียดพระเครื่อง</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background-color: #fffaf0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background-color: #fff8dc;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    h2 {
-      color: #b58e00;
-      text-align: center;
-    }
-    .main-image {
-      width: 300px;
-      height: auto;
-      display: block;
-      margin: 10px auto;
-      border: 1px solid #aaa;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      object-fit: cover;
-    }
-    .thumbnail-container {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .thumbnail-container img {
-      width: 70px;
-      height: 70px;
-      object-fit: cover;
-      border: 1px solid #aaa;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .info {
-      margin-top: 20px;
-    }
-    .info p {
-      margin: 8px 0;
-      font-size: 16px;
-    }
-  </style>
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    const supabase = createClient(
-      'https://srzqmhgdaedfoyakqmpg.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
-    );
-
-    const params = new URLSearchParams(window.location.search);
-    const amuletId = params.get("id");
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      if (!amuletId) {
-        document.querySelector(".container").innerHTML = "<p>ไม่พบข้อมูลพระเครื่อง</p>";
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("amulets")
-        .select("name, price, description, image_url1, image_url2, image_url3, image_url4")
-        .eq("id", amuletId)
-        .single();
-
-      if (error || !data) {
-        document.querySelector(".container").innerHTML = "<p>ไม่สามารถโหลดข้อมูลพระเครื่องได้</p>";
-        console.error(error);
-        return;
-      }
-
-      const container = document.querySelector(".container");
-      const mainImage = data.image_url1 || data.image_url2 || data.image_url3 || data.image_url4 || "";
-      container.innerHTML = `
-        <h2>${data.name}</h2>
-        ${mainImage ? `<img src="${mainImage}" class="main-image" id="main-image">` : ""}
-        <div class="thumbnail-container">
-          ${data.image_url1 ? `<img src="${data.image_url1}" onclick="changeMainImage('${data.image_url1}')">` : ""}
-          ${data.image_url2 ? `<img src="${data.image_url2}" onclick="changeMainImage('${data.image_url2}')">` : ""}
-          ${data.image_url3 ? `<img src="${data.image_url3}" onclick="changeMainImage('${data.image_url3}')">` : ""}
-          ${data.image_url4 ? `<img src="${data.image_url4}" onclick="changeMainImage('${data.image_url4}')">` : ""}
-        </div>
-        <div class="info">
-          <p><strong>ราคา:</strong> ${data.price}</p>
-          <p><strong>รายละเอียด:</strong> ${data.description}</p>
-        </div>
-      `;
-    });
-
-    window.changeMainImage = function(url) {
-      const mainImg = document.getElementById("main-image");
-      if (mainImg) {
-        mainImg.src = url;
-      }
-    }
-  </script>
+  <title>ระบบพระเครื่อง</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <p>กำลังโหลดข้อมูลพระเครื่อง...</p>
-  </div>
+  <h2>ระบบจัดการพระเครื่อง</h2>
+  <a href="add.html">ไปหน้าเพิ่มพระเครื่อง</a>
 </body>
 </html>
