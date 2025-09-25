@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -52,6 +53,19 @@
       margin: 8px 0;
       font-size: 16px;
     }
+    .back-link {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .back-link a {
+      text-decoration: none;
+      color: #b58e00;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .back-link a:hover {
+      color: #8a6d00;
+    }
   </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -96,6 +110,9 @@
         <div class="info">
           <p><strong>ราคา:</strong> ${data.price}</p>
           <p><strong>รายละเอียด:</strong> ${data.description}</p>
+        </div>
+        <div class="back-link">
+          <a href="list.html">← กลับไปที่รายการทั้งหมด</a>
         </div>
       `;
     });
