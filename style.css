@@ -141,35 +141,3 @@ button:hover {
   color: #b8860b;
   font-size: 16px;
 }
-.qr-section {
-  text-align: center;
-  margin-top: 40px;
-  background-color: #fff8dc;
-  padding: 20px;
-  border-radius: 10px;
-}
-.qr-section img {
-  width: 200px;
-  height: auto;
-  border: 2px solid #b58e00;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-.qr-section p {
-  color: #b58e00;
-  font-weight: bold;
-  margin-top: 10px;
-}
-.back-link {
-  text-align: center;
-  margin-top: 30px;
-}
-.back-link a {
-  color: #b58e00;
-  font-weight: bold;
-  text-decoration: none;
-  font-size: 1.1em;
-}
-.back-link a:hover {
-  text-decoration: underline;
-}
