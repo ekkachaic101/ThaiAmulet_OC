@@ -2,100 +2,99 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <title>ช่องทางติดต่อ - ThaiAmulet_OC</title>
-    <style>
-        body {
-            font-family: "Sarabun", sans-serif;
-            margin: 0;
-            background-color: #fff8dc;
-            background-image: url('https://i.imgur.com/3YzQZzT.png'); /* ลายกนกไทย */
-            background-repeat: repeat;
-        }
-        .sidebar {
-            width: 220px;
-            background-color: #fdd835;
-            position: fixed;
-            height: 100%;
-            padding-top: 20px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
-        .sidebar a {
-            display: block;
-            color: #000;
-            padding: 12px 20px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .sidebar a:hover {
-            background-color: #fff176;
-        }
-        .content {
-            margin-left: 240px;
-            padding: 30px;
-        }
-        h1 {
-            color: #d4af37;
-        }
-        .contact-info {
-            font-size: 18px;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-family: "Sarabun", sans-serif;
-        }
-        button {
-            background-color: #fdd835;
-            border: none;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #fff176;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>ช่องทางติดต่อ - ThaiAmulet_OC</title>
+  <style>
+    body {
+      font-family: 'TH Sarabun New', sans-serif;
+      background-image: url('jpeg.jpg');
+      background-repeat: repeat;
+      background-size: 400px;
+      background-color: #fffaf0;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background-color: #fff8dc;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      margin-top: 40px;
+    }
+    h1 {
+      color: #b58e00;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      color: #333;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-family: inherit;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #b58e00;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    button:hover {
+      background-color: #a07c00;
+    }
+    .qr-section {
+      text-align: center;
+      margin-top: 40px;
+      background-color: #fff8dc;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .qr-section img {
+      width: 200px;
+      height: auto;
+      border: 2px solid #b58e00;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .qr-section p {
+      color: #b58e00;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="sidebar">
-        <a href="index.html">หน้าแรก</a>
-        <a href="products.html">วัตถุมงคล</a>
-        <a href="about.html">เกี่ยวกับเรา</a>
-        <a href="contact.html">ช่องทางติดต่อ</a>
+  <div class="container">
+    <h1>ช่องทางติดต่อ</h1>
+    <p><strong>Line ID:</strong> @937orilu</p>
+    <form action="https://formspree.io/f/your_form_id" method="POST">
+      <label for="name">ชื่อ</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">อีเมล</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="message">ข้อความ</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+
+      <button type="submit">ส่งข้อความ</button>
+    </form>
+
+    <div class="qr-section">
+      <img src="M_gainfriends_2dbarcodes_GW.png" alt="QR Code LINE">
+      <p>สแกนเพื่อเพิ่มเพื่อนใน LINE (@937orilu)</p>
     </div>
-    <div class="content">
-        <h1>ช่องทางติดต่อ</h1>
-        <div class="contact-info">
-            <p><strong>Line ID:</strong> @937orilu</p>
-        </div>
-        <form>
-            <div class="form-group">
-                <label for="name">ชื่อ</label>
-                <input type="text" id="name" name="name" placeholder="กรอกชื่อของคุณ">
-            </div>
-            <div class="form-group">
-                <label for="email">อีเมล</label>
-                <input type="email" id="email" name="email" placeholder="กรอกอีเมลของคุณ">
-            </div>
-            <div class="form-group">
-                <label for="message">ข้อความ</label>
-                <textarea id="message" name="message" rows="5" placeholder="กรอกข้อความของคุณ"></textarea>
-            </div>
-            <button type="submit">ส่งข้อความ</button>
-        </form>
-    </div>
+  </div>
 </body>
 </html>
