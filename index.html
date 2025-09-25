@@ -1,69 +1,56 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>หน้าแรก - ThaiAmulet_OC</title>
+  <title>รายละเอียดพระเครื่อง</title>
   <style>
     body {
       font-family: sans-serif;
       background-color: #fffaf0;
-      margin: 0;
-      padding: 0;
-    }
-    .navbar ul {
-      list-style: none;
-      padding: 0;
-      display: flex;
-      gap: 15px;
-      background-color: #f0e68c;
-      margin: 0;
-      padding: 10px;
-    }
-    .navbar ul li a {
-      text-decoration: none;
-      color: #333;
-      font-weight: bold;
-    }
-    .navbar ul li a:hover {
-      color: #000;
+      padding: 20px;
     }
     .container {
-      max-width: 1200px;
+      max-width: 800px;
       margin: auto;
+      background-color: #fff8dc;
       padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
     h2 {
       color: #b58e00;
-    }
-    .amulet-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-    .amulet-card {
-      background-color: #fff8dc;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 15px;
       text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .amulet-card img {
-      width: 120px;
+    .main-image {
+      width: 300px;
       height: auto;
-      border-radius: 6px;
+      display: block;
+      margin: 10px auto;
       border: 1px solid #aaa;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       object-fit: cover;
     }
-    .amulet-card h3 {
-      margin: 10px 0 5px;
-      color: #b58e00;
+    .thumbnail-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
     }
-    .amulet-card p {
-      margin: 5px 0;
+    .thumbnail-container img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .info {
+      margin-top: 20px;
+    }
+    .info p {
+      margin: 8px 0;
+      font-size: 16px;
     }
   </style>
   <script type="module">
@@ -74,46 +61,56 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
     );
 
-    document.addEventListener("DOMContentLoaded", async () => {
-      const { data, error } = await supabase
-        .from("amulets")
-        .select("name, price, image_url1")
-        .order("created_at", { ascending: false })
-        .limit(20);
+    const params = new URLSearchParams(window.location.search);
+    const amuletId = params.get("id");
 
-      if (error) {
-        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!amuletId) {
+        document.querySelector(".container").innerHTML = "<p>ไม่พบข้อมูลพระเครื่อง</p>";
         return;
       }
 
-      const grid = document.getElementById("amulet-grid");
-      data.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "amulet-card";
-        card.innerHTML = `
-          <h3>${item.name}</h3>
-          ${item.image_url1 ? `<img src="${item.image_url1}" alt="${item.name}">` : ""}
-          <p><strong>ราคา:</strong> ${item.price}</p>
-        `;
-        grid.appendChild(card);
-      });
+      const { data, error } = await supabase
+        .from("amulets")
+        .select("name, price, description, image_url1, image_url2, image_url3, image_url4")
+        .eq("id", amuletId)
+        .single();
+
+      if (error || !data) {
+        document.querySelector(".container").innerHTML = "<p>ไม่สามารถโหลดข้อมูลพระเครื่องได้</p>";
+        console.error(error);
+        return;
+      }
+
+      const container = document.querySelector(".container");
+      const mainImage = data.image_url1 || data.image_url2 || data.image_url3 || data.image_url4 || "";
+      container.innerHTML = `
+        <h2>${data.name}</h2>
+        ${mainImage ? `<img src="${mainImage}" class="main-image" id="main-image">` : ""}
+        <div class="thumbnail-container">
+          ${data.image_url1 ? `<img src="${data.image_url1}" onclick="changeMainImage('${data.image_url1}')">` : ""}
+          ${data.image_url2 ? `<img src="${data.image_url2}" onclick="changeMainImage('${data.image_url2}')">` : ""}
+          ${data.image_url3 ? `<img src="${data.image_url3}" onclick="changeMainImage('${data.image_url3}')">` : ""}
+          ${data.image_url4 ? `<img src="${data.image_url4}" onclick="changeMainImage('${data.image_url4}')">` : ""}
+        </div>
+        <div class="info">
+          <p><strong>ราคา:</strong> ${data.price}</p>
+          <p><strong>รายละเอียด:</strong> ${data.description}</p>
+        </div>
+      `;
     });
+
+    window.changeMainImage = function(url) {
+      const mainImg = document.getElementById("main-image");
+      if (mainImg) {
+        mainImg.src = url;
+      }
+    }
   </script>
 </head>
 <body>
-  <nav class="navbar">
-    <ul>
-      <li><a href="index.html">หน้าแรก</a></li>
-      <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
-      <li><a href="list.html">📄 รายการทั้งหมด</a></li>
-      <li><a href="stats.html">📊 สถิติ</a></li>
-      <li><a href="login.html">🔐 เข้าสู่ระบบ</a></li>
-    </ul>
-  </nav>
-
   <div class="container">
-    <h2>พระเครื่องล่าสุด</h2>
-    <div id="amulet-grid" class="amulet-grid"></div>
+    <p>กำลังโหลดข้อมูลพระเครื่อง...</p>
   </div>
 </body>
 </html>
