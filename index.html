@@ -91,6 +91,21 @@
     .amulet-card p {
       margin: 5px 0;
     }
+    .footer-menu {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .footer-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      background-color: #f0e68c;
+      padding: 10px 20px;
+      border-radius: 8px;
+    }
+    .footer-menu a:hover {
+      background-color: #e6d36c;
+    }
   </style>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -133,7 +148,6 @@
     <ul>
       <li><a href="index.html">หน้าแรก</a></li>
       <li><a href="list.html">📄 รายการทั้งหมด</a></li>
-      <li><a href="stats.html">📊 สถิติ</a></li>
       <li><a href="contact.html">📬 ช่องทางติดต่อ</a></li>
       <li><a href="login.html">🔐 เข้าสู่ระบบ</a></li>
     </ul>
@@ -148,6 +162,10 @@
   <div class="container">
     <h2>พระเครื่องล่าสุด</h2>
     <div id="amulet-grid" class="amulet-grid"></div>
+  </div>
+
+  <div class="footer-menu">
+    <a href="stats.html">📊 สถิติ</a>
   </div>
 </body>
 </html>
