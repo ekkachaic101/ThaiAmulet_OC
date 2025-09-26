@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -50,12 +49,17 @@
       gap: 20px;
     }
     .amulet-item {
-      border: 1px solid #ccc;
+      border: 1px solid #d4af37;
       padding: 15px;
-      border-radius: 8px;
+      border-radius: 12px;
       background-color: #fff8dc;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .amulet-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
     }
     .main-image {
       width: 200px;
@@ -72,6 +76,24 @@
     }
     .amulet-item p {
       margin: 5px 0;
+    }
+    .card-buttons {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .card-buttons button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #f0c000;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .card-buttons button:hover {
+      background-color: #d4af37;
     }
   </style>
   <script type="module">
@@ -128,6 +150,10 @@
             <h3>${item.name}</h3>
             <p><strong>ราคา:</strong> ${item.price}</p>
           </a>
+          <div class="card-buttons">
+            <button onclick="editAmulet(${item.id})">แก้ไข</button>
+            <button onclick="deleteAmulet(${item.id})">ลบ</button>
+          </div>
         `;
         listContainer.appendChild(div);
       });
@@ -141,6 +167,25 @@
       const keyword = document.getElementById("search").value.toLowerCase();
       filteredAmulets = amulets.filter(item => item.name.toLowerCase().includes(keyword));
       renderAmulets(document.getElementById("sort").value);
+    }
+
+    window.editAmulet = function(id) {
+      window.location.href = `edit.html?id=${id}`;
+    }
+
+    window.deleteAmulet = async function(id) {
+      if (confirm("คุณแน่ใจว่าต้องการลบพระเครื่องนี้?")) {
+        const { error } = await supabase.from("amulets").delete().eq("id", id);
+        if (error) {
+          alert("เกิดข้อผิดพลาดในการลบ");
+          console.error(error);
+        } else {
+          alert("ลบเรียบร้อยแล้ว");
+          amulets = amulets.filter(item => item.id !== id);
+          filteredAmulets = [...amulets];
+          renderAmulets();
+        }
+      }
     }
   </script>
 </head>
