@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -45,10 +46,12 @@
       font-weight: bold;
       margin-top: 10px;
     }
-    .messenger-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .messenger-link {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .messenger-link a {
+      display: inline-block;
       background-color: #0084ff;
       color: white;
       padding: 10px 20px;
@@ -56,13 +59,10 @@
       text-decoration: none;
       font-weight: bold;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      margin: 20px auto;
-      width: fit-content;
+      font-size: 1.1em;
     }
-    .messenger-button img {
-      width: 24px;
-      height: 24px;
-      margin-right: 10px;
+    .messenger-link a:hover {
+      background-color: #006fd6;
     }
     .back-link {
       text-align: center;
@@ -89,10 +89,9 @@
       <p>สแกนเพื่อเพิ่มเพื่อนใน LINE (@937orilu)</p>
     </div>
 
-    <a class="messenger-button" href="https://m.me/110825030666104" target="_blank">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Facebook_Messenger_Logo_2020.svg" alt="Messenger Icon">
-      แชทกับเราผ่าน Messenger
-    </a>
+    <div class="messenger-link">
+      <a href="https://m.me/110825030666104" target="_blank">💬 แชทกับเราผ่าน Messenger</a>
+    </div>
 
     <div class="back-link">
       <a href="list.html">← กลับไปยังรายการทั้งหมด</a>
