@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -12,7 +13,7 @@
       background-color: #fffaf0;
     }
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: auto;
       padding: 20px;
     }
@@ -38,58 +39,60 @@
       text-align: left;
     }
     .search-bar input {
-      padding: 8px;
-      width: 300px;
+      padding: 6px;
+      width: 250px;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
     #amulet-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
     }
     .amulet-item {
       border: 1px solid #d4af37;
-      padding: 15px;
-      border-radius: 12px;
+      padding: 10px;
+      border-radius: 10px;
       background-color: #fff8dc;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       text-align: center;
       transition: transform 0.2s ease;
+      font-size: 14px;
     }
     .amulet-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
     .main-image {
-      width: 200px;
-      height: auto;
-      margin: 10px auto;
+      width: 100px;
+      height: 100px;
+      margin: 5px auto;
       border: 1px solid #aaa;
       border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       object-fit: cover;
     }
     .amulet-item h3 {
-      margin-top: 0;
+      margin: 5px 0;
+      font-size: 16px;
       color: #b58e00;
     }
     .amulet-item p {
-      margin: 5px 0;
+      margin: 3px 0;
     }
     .card-buttons {
-      margin-top: 10px;
+      margin-top: 5px;
       display: flex;
       justify-content: center;
-      gap: 10px;
+      gap: 5px;
     }
     .card-buttons button {
-      padding: 6px 12px;
+      padding: 4px 8px;
       border: none;
       border-radius: 6px;
       background-color: #f0c000;
       color: #fff;
       cursor: pointer;
+      font-size: 12px;
       font-weight: bold;
     }
     .card-buttons button:hover {
