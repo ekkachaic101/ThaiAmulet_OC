@@ -1,40 +1,67 @@
 
 <!DOCTYPE html>
-<html lang='th'>
+<html lang="th">
 <head>
-  <meta charset='UTF-8'>
-  <title>สถิติ - ThaiAmulet_OC</title>
-  <link rel='stylesheet' href='style.css'>
-  <link href='https://fonts.googleapis.com/css2?family=Sarabun&display=swap' rel='stylesheet'>
+  <meta charset="UTF-8">
+  <title>สถิติผู้เข้าชม - ThaiAmulet_OC</title>
+  <style>
+    body {
+      font-family: 'TH Sarabun New', sans-serif;
+      background-color: #fffaf0;
+      background-image: url('jpeg.jpg');
+      background-repeat: repeat;
+      background-size: 400px;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #fff8dc;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      margin-top: 60px;
+      text-align: center;
+    }
+    h1 {
+      color: #b58e00;
+      margin-bottom: 20px;
+    }
+    #visit-count {
+      font-size: 1.5em;
+      color: #333;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <nav class='navbar'>
-    <ul>
-      <li><a href='index.html'>หน้าแรก</a></li>
-      <li><a href='add.html'>➕ เพิ่มพระเครื่อง</a></li>
-      <li><a href='list.html'>📋 รายการทั้งหมด</a></li>
-      <li><a href='stats.html'>📊 สถิติ</a></li>
-      <li><a href='#'>🚪 ออกจากระบบ</a></li>
-    </ul>
-  </nav>
-  <div class='container'>
-    <aside class='sidebar'>
-      <h2>เมนูจัดการ</h2>
-      <ul>
-        <li><a href='add.html'>➕ เพิ่มพระ</a></li>
-        <li><a href='list.html'>📋 รายการทั้งหมด</a></li>
-        <li><a href='stats.html'>📊 สถิติ</a></li>
-        <li><a href='#'>🚪 ออกจากระบบ</a></li>
-      </ul>
-    </aside>
-    <main class='product-grid'>
-      <div style='padding:20px;'>
-        <h3>จำนวนพระเครื่อง: <span id='total-products'>80,239</span></h3>
-        <h3>จำนวนเข้าชม: <span id='total-views'>363,478,206</span></h3>
-        <h3>สมาชิกทั้งหมด: <span id='total-members'>56,548</span></h3>
-        <h3>สมาชิกออนไลน์: <span id='online-members'>633</span></h3>
-      </div>
-    </main>
+  <div class="container">
+    <h1>สถิติผู้เข้าชมเว็บไซต์</h1>
+    <p id="visit-count">กำลังโหลดจำนวนผู้เข้าชม...</p>
   </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const SUPABASE_URL = "https://labxpswxsaqzlubzqaoy.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Y9rCpK1TISgMhRauvQLBSg_xpK4Mka2";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // บันทึกการเข้าชมใหม่
+    await supabase.from("visits").insert([{ }]);
+
+    // ดึงจำนวนผู้เข้าชมทั้งหมด
+    const { count, error } = await supabase
+      .from("visits")
+      .select("*", { count: "exact", head: true });
+
+    if (error) {
+      document.getElementById("visit-count").innerText = "เกิดข้อผิดพลาดในการโหลดข้อมูล";
+      console.error(error);
+    } else {
+      document.getElementById("visit-count").innerText = `จำนวนผู้เข้าชมทั้งหมด: ${count} ครั้ง`;
+    }
+  </script>
 </body>
 </html>
