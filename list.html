@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>รายการพระเครื่องทั้งหมด</title>
-  <style>
+<meta charset="utf-8"/>
+<title>รายการพระเครื่อง หลวงปู่ พระอาจารย์ ครูบา พระสมเด็จ พระปิดตา พระกรุ</title>
+<style>
     body {
       font-family: sans-serif;
       background-image: url('jpeg.jpg');
@@ -98,7 +99,7 @@
       background-color: #d4af37;
     }
   </style>
-  <script type="module">
+<script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
     const supabase = createClient(
@@ -187,31 +188,30 @@
       }
     }
   </script>
-</head>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="พระเครื่อง, หลวงปู่, พระอาจารย์, ครูบา, พระสมเด็จ, พระปิดตา, พระกรุ" name="keywords"/><meta content="รวมรายการพระเครื่องยอดนิยม เช่น หลวงปู่ พระอาจารย์ ครูบา พระสมเด็จ พระปิดตา พระกรุ พร้อมภาพและรายละเอียด" name="description"/></head>
 <body>
-  <nav class="navbar">
-    <ul>
-      <li><a href="index.html">หน้าแรก</a></li>
-      <li><a href="list.html">📄 รายการทั้งหมด</a></li>
-      <li><a href="contact.html">📞 ช่องทางติดต่อ</a></li>
-    </ul>
-  </nav>
-
-  <div class="container">
-    <h2>รายการพระเครื่องทั้งหมด</h2>
-    <div class="search-bar">
-      <label for="search">ค้นหาชื่อพระเครื่อง:</label>
-      <input type="text" id="search" oninput="filterAmulets()" placeholder="พิมพ์ชื่อพระ...">
-    </div>
-    <div class="sort-bar">
-      <label for="sort">เรียงตาม:</label>
-      <select id="sort" onchange="changeSort(this.value)">
-        <option value="created_at">ล่าสุด</option>
-        <option value="name">ชื่อ</option>
-        <option value="price">ราคา</option>
-      </select>
-    </div>
-    <div id="amulet-list"></div>
-  </div>
+<nav class="navbar">
+<ul>
+<li><a href="index.html">หน้าแรก</a></li>
+<li><a href="list.html">📄 รายการทั้งหมด</a></li>
+<li><a href="contact.html">📞 ช่องทางติดต่อ</a></li>
+</ul>
+</nav>
+<div class="container">
+<h2>รายการพระเครื่องทั้งหมด - หลวงปู่ พระอาจารย์ ครูบา พระสมเด็จ พระปิดตา พระกรุ</h2>
+<div class="search-bar">
+<label for="search">ค้นหาชื่อพระเครื่อง:</label>
+<input id="search" oninput="filterAmulets()" placeholder="พิมพ์ชื่อพระ..." type="text"/>
+</div>
+<div class="sort-bar">
+<label for="sort">เรียงตาม:</label>
+<select id="sort" onchange="changeSort(this.value)">
+<option value="created_at">ล่าสุด</option>
+<option value="name">ชื่อ</option>
+<option value="price">ราคา</option>
+</select>
+</div>
+<div id="amulet-list"></div>
+</div>
 </body>
 </html>
