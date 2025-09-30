@@ -65,7 +65,7 @@
 <body>
   <header>พระสมเด็จ</header>
   <div class="amulet-container" id="amulet-list"></div>
-  <div class="back-link"><a href="index.html">← กลับหน้าแรก</a></div>
+  <div class="back-link"><a href="index.html">&larr; กลับหน้าแรก</a></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -73,6 +73,10 @@
       'https://srzqmhgdaedfoyakqmpg.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
     );
+
+    function isValidImage(url) {
+      return (typeof url === 'string') && (url.startsWith('http://') || url.startsWith('https://')) && (url.match(/\.(jpeg|jpg|gif|png)$/i));
+    }
 
     async function loadAmulets() {
       const { data, error } = await supabase
@@ -89,7 +93,7 @@
       container.innerHTML = '';
 
       filtered.forEach(item => {
-        const imageUrl = item.image_url ? item.image_url : 'image.png';
+        const imageUrl = isValidImage(item.image_url) ? item.image_url : 'https://via.placeholder.com/250';
         container.innerHTML += `
           <div class="amulet-card">
             <img src="${imageUrl}" alt="${item.name}" />
