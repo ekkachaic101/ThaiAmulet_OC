@@ -143,51 +143,64 @@
       });
     });
   </script>
-</head>
-<body>
+
 <style>
-body {
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
-}
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 220px;
-    height: 100%;
-    background-color: #fff8dc;
-    border-right: 2px solid #e0c060;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100%;
+  background: url('jpeg.jpg') repeat;
+  background-size: cover;
+  padding: 20px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+  font-family: 'Sarabun', sans-serif;
+  z-index: 1000;
 }
+
 .sidebar h2 {
-    color: #b8860b;
-    margin-bottom: 15px;
+  color: #b8860b;
+  font-size: 22px;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 1px #fff;
 }
+
 .sidebar ul {
-    list-style: none;
-    padding: 0;
+  list-style: none;
+  padding: 0;
 }
+
 .sidebar ul li {
-    margin-bottom: 10px;
+  margin-bottom: 15px;
 }
+
 .sidebar ul li a {
-    text-decoration: none;
-    color: #8b4513;
-    font-weight: bold;
+  text-decoration: none;
+  color: #4b3e1d;
+  font-weight: bold;
+  font-size: 16px;
+  display: block;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: background 0.3s, transform 0.2s;
 }
+
 .sidebar ul li a:hover {
-    color: #d2691e;
+  background-color: rgba(255, 215, 0, 0.3);
+  transform: scale(1.05);
+  color: #b8860b;
 }
+
 .main-content {
-    margin-left: 240px;
-    padding: 20px;
+  margin-left: 260px;
+  padding: 20px;
 }
 </style>
-<div class="sidebar">
-<h2>เมนูพระเครื่อง</h2>
+</head>
+<body>
+<div class="main-content"><div class="sidebar">
+<h2>หมวดหมู่พระเครื่อง</h2>
 <ul>
 <li><a href="index.html">🏠 หน้าแรก</a></li>
 <li><a href="list.html">📄 รายการทั้งหมด</a></li>
@@ -198,7 +211,7 @@ body {
 <li><a href="phralor.html">🟣 พระหล่อ</a></li>
 </ul>
 </div>
-<div class="main-content">
+
 <nav class="navbar">
 <ul>
 <li><a href="index.html">หน้าแรก</a></li>
