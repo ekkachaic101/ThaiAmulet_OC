@@ -36,6 +36,7 @@ const category = document.getElementById("category").value.trim();
         image_url2: image_urls[1],
         image_url3: image_urls[2],
         image_url4: image_urls[3],
+    category,
         created_at: new Date().toISOString(),
       },
     ])
