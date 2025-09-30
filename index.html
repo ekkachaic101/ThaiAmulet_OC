@@ -1,10 +1,8 @@
-
 <!DOCTYPE html>
 
 <html lang="th">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>หน้าแรก - ThaiAmulet_OC</title>
 <style>
     body {
@@ -20,12 +18,10 @@
       list-style: none;
       padding: 0;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      gap: 15px;
       background-color: #f0e68c;
       margin: 0;
       padding: 10px;
-      justify-content: center;
     }
     .navbar ul li a {
       text-decoration: none;
@@ -111,110 +107,99 @@
     .footer-menu a:hover {
       background-color: #e6d36c;
     }
-    .sidebar {
-      background: url('jpeg.jpg') repeat;
-      background-size: cover;
-      padding: 20px;
-      font-family: 'Sarabun', sans-serif;
-    }
-    .sidebar h2 {
-      color: #b8860b;
-      font-size: 22px;
-      margin-bottom: 20px;
-      text-shadow: 1px 1px 1px #fff;
-    }
-    .sidebar ul {
-      list-style: none;
-      padding: 0;
-    }
-    .sidebar ul li {
-      margin-bottom: 15px;
-    }
-    .sidebar ul li a {
-      text-decoration: none;
-      color: #4b3e1d;
-      font-weight: bold;
-      font-size: 16px;
-      display: block;
-      padding: 8px 12px;
-      border-radius: 5px;
-      transition: background 0.3s, transform 0.2s;
-    }
-    .sidebar ul li a:hover {
-      background-color: rgba(255, 215, 0, 0.3);
-      transform: scale(1.05);
-      color: #b8860b;
-    }
-    .main-content {
-      display: flex;
-      flex-direction: row;
-    }
-    @media (max-width: 768px) {
-      .main-content {
-        flex-direction: column;
+  </style>
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabase = createClient(
+      'https://srzqmhgdaedfoyakqmpg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
+    );
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const { data, error } = await supabase
+        .from("amulets")
+        .select("id, name, price, image_url1")
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (error) {
+        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
+        return;
       }
-      .sidebar {
-        width: 100%;
-        box-shadow: none;
-      }
-      .amulet-grid {
-        grid-template-columns: 1fr;
-      }
-      .logo-section img {
-        width: 100px;
-        height: 100px;
-      }
-      .logo-section h1 {
-        font-size: 1.5em;
-      }
-      .navbar ul {
-        flex-direction: column;
-        align-items: center;
-      }
-    }
-  
-@media (max-width: 768px) {
-  .navbar ul {
-    flex-direction: column;
-    gap: 10px;
-  }
-  .sidebar {
-    position: relative;
-    width: 100%;
-    height: auto;
-    box-shadow: none;
-    padding: 10px;
-  }
-  .main-content {
-    margin-left: 0;
-    padding: 10px;
-  }
-  .amulet-grid {
-    grid-template-columns: 1fr;
-  }
-  .logo-section img {
-    width: 100px;
-    height: 100px;
-  }
-  .logo-section h1 {
-    font-size: 1.5em;
-  }
-  .sidebar ul li a {
-    font-size: 14px;
-    padding: 6px 10px;
-  }
-  .footer-menu a {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 14px;
-    padding: 8px 16px;
-  }
+
+      const grid = document.getElementById("amulet-grid");
+      data.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "amulet-card";
+        card.innerHTML = `
+          <a href="detail.html?id=${item.id}">
+            ${item.image_url1 ? `<img src="${item.image_url1}" alt="${item.name}">` : ""}
+          </a>
+          <h3>${item.name}</h3>
+          <p><strong>ราคา:</strong> ${item.price}</p>
+        `;
+        grid.appendChild(card);
+      });
+    });
+  </script>
+
+<style>
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100%;
+  background: url('jpeg.jpg') repeat;
+  background-size: cover;
+  padding: 20px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+  font-family: 'Sarabun', sans-serif;
+  z-index: 1000;
+}
+
+.sidebar h2 {
+  color: #b8860b;
+  font-size: 22px;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 1px #fff;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #4b3e1d;
+  font-weight: bold;
+  font-size: 16px;
+  display: block;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.sidebar ul li a:hover {
+  background-color: rgba(255, 215, 0, 0.3);
+  transform: scale(1.05);
+  color: #b8860b;
+}
+
+.main-content {
+  margin-left: 260px;
+  padding: 20px;
 }
 </style>
 </head>
 <body>
-<div class="main-content">
-<div class="sidebar">
+<div class="main-content"><div class="sidebar">
 <h2>หมวดหมู่พระเครื่อง</h2>
 <ul>
 <li><a href="index.html">🏠 หน้าแรก</a></li>
@@ -226,7 +211,7 @@
 <li><a href="phralor.html">🟣 พระหล่อ</a></li>
 </ul>
 </div>
-<div style="flex: 1;">
+
 <nav class="navbar">
 <ul>
 <li><a href="index.html">หน้าแรก</a></li>
@@ -247,38 +232,5 @@
 <div class="footer-menu">
 <a href="stats.html">📊 สถิติ</a>
 </div>
-</div>
-</div>
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-  const supabase = createClient(
-    'https://srzqmhgdaedfoyakqmpg.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
-  );
-  document.addEventListener("DOMContentLoaded", async () => {
-    const { data, error } = await supabase
-      .from("amulets")
-      .select("id, name, price, image_url1")
-      .order("created_at", { ascending: false })
-      .limit(20);
-    if (error) {
-      console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
-      return;
-    }
-    const grid = document.getElementById("amulet-grid");
-    data.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "amulet-card";
-      card.innerHTML = `
-        <a href="detail.html?id=${item.id}">
-          ${item.image_url1 ? `<img src="${item.image_url1}" alt="${item.name}">` : ""}
-        </a>
-        <h3>${item.name}</h3>
-        <p><strong>ราคา:</strong> ${item.price}</p>
-      `;
-      grid.appendChild(card);
-    });
-  });
-</script>
-</body>
+</div></body>
 </html>
