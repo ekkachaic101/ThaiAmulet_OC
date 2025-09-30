@@ -1,11 +1,12 @@
 
 <!DOCTYPE html>
+
 <html lang="th">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>หน้าแรก - ThaiAmulet_OC</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>หน้าแรก - ThaiAmulet_OC</title>
+<style>
     body {
       font-family: sans-serif;
       background-image: url('jpeg.jpg');
@@ -171,44 +172,82 @@
         align-items: center;
       }
     }
-  </style>
+  
+@media (max-width: 768px) {
+  .navbar ul {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    box-shadow: none;
+    padding: 10px;
+  }
+  .main-content {
+    margin-left: 0;
+    padding: 10px;
+  }
+  .amulet-grid {
+    grid-template-columns: 1fr;
+  }
+  .logo-section img {
+    width: 100px;
+    height: 100px;
+  }
+  .logo-section h1 {
+    font-size: 1.5em;
+  }
+  .sidebar ul li a {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+  .footer-menu a {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+</style>
 </head>
 <body>
 <div class="main-content">
-  <div class="sidebar">
-    <h2>หมวดหมู่พระเครื่อง</h2>
-    <ul>
-      <li><a href="index.html">🏠 หน้าแรก</a></li>
-      <li><a href="list.html">📄 รายการทั้งหมด</a></li>
-      <li><a href="somdej.html">🟡 พระสมเด็จ</a></li>
-      <li><a href="pidta.html">🟤 พระปิดตา</a></li>
-      <li><a href="kru.html">🟠 พระกรุ</a></li>
-      <li><a href="kring.html">🔵 พระกริ่ง</a></li>
-      <li><a href="phralor.html">🟣 พระหล่อ</a></li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <nav class="navbar">
-      <ul>
-        <li><a href="index.html">หน้าแรก</a></li>
-        <li><a href="list.html">📄 รายการทั้งหมด</a></li>
-        <li><a href="contact.html">📬 ช่องทางติดต่อ</a></li>
-        <li><a href="login.html">🔐 เข้าสู่ระบบ</a></li>
-      </ul>
-    </nav>
-    <div class="logo-section">
-      <img alt="ThaiAmulet_OC Logo" src="551398895_24700621249555121_6637924374533059716_n.jpg"/>
-      <h1>ThaiAmulet_OC</h1>
-      <p>เว็บไซต์รวมภาพและข้อมูลพระเครื่องไทย</p>
-    </div>
-    <div class="container">
-      <h2>พระเครื่องล่าสุด</h2>
-      <div class="amulet-grid" id="amulet-grid"></div>
-    </div>
-    <div class="footer-menu">
-      <a href="stats.html">📊 สถิติ</a>
-    </div>
-  </div>
+<div class="sidebar">
+<h2>หมวดหมู่พระเครื่อง</h2>
+<ul>
+<li><a href="index.html">🏠 หน้าแรก</a></li>
+<li><a href="list.html">📄 รายการทั้งหมด</a></li>
+<li><a href="somdej.html">🟡 พระสมเด็จ</a></li>
+<li><a href="pidta.html">🟤 พระปิดตา</a></li>
+<li><a href="kru.html">🟠 พระกรุ</a></li>
+<li><a href="kring.html">🔵 พระกริ่ง</a></li>
+<li><a href="phralor.html">🟣 พระหล่อ</a></li>
+</ul>
+</div>
+<div style="flex: 1;">
+<nav class="navbar">
+<ul>
+<li><a href="index.html">หน้าแรก</a></li>
+<li><a href="list.html">📄 รายการทั้งหมด</a></li>
+<li><a href="contact.html">📬 ช่องทางติดต่อ</a></li>
+<li><a href="login.html">🔐 เข้าสู่ระบบ</a></li>
+</ul>
+</nav>
+<div class="logo-section">
+<img alt="ThaiAmulet_OC Logo" src="551398895_24700621249555121_6637924374533059716_n.jpg"/>
+<h1>ThaiAmulet_OC</h1>
+<p>เว็บไซต์รวมภาพและข้อมูลพระเครื่องไทย</p>
+</div>
+<div class="container">
+<h2>พระเครื่องล่าสุด</h2>
+<div class="amulet-grid" id="amulet-grid"></div>
+</div>
+<div class="footer-menu">
+<a href="stats.html">📊 สถิติ</a>
+</div>
+</div>
 </div>
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
