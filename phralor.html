@@ -33,16 +33,6 @@
     .navbar ul li a:hover {
       color: #000;
     }
-    .sort-bar, .search-bar {
-      margin: 10px 0 20px;
-      text-align: left;
-    }
-    .search-bar input {
-      padding: 6px;
-      width: 250px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
     #amulet-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -87,9 +77,6 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
     );
 
-    let amulets = [];
-    let filteredAmulets = [];
-
     document.addEventListener("DOMContentLoaded", async () => {
       const { data, error } = await supabase
         .from("amulets")
@@ -101,28 +88,16 @@
         return;
       }
 
-      amulets = data.filter(item => item.name && item.name.includes("หล่อ"));
-      filteredAmulets = [...amulets];
-      renderAmulets();
-    });
-
-    function renderAmulets(sortBy = "created_at") {
+      const filtered = data.filter(item => item.name && item.name.includes("หล่อ"));
       const listContainer = document.getElementById("amulet-list");
       listContainer.innerHTML = "";
 
-      if (filteredAmulets.length === 0) {
-        listContainer.innerHTML = "<p>ไม่พบรายการพระเครื่อง</p>";
+      if (filtered.length === 0) {
+        listContainer.innerHTML = "<p>ไม่พบรายการพระหล่อ</p>";
         return;
       }
 
-      const sorted = [...filteredAmulets];
-      sorted.sort((a, b) => {
-        if (sortBy === "name") return a.name.localeCompare(b.name);
-        if (sortBy === "price") return parseFloat(a.price) - parseFloat(b.price);
-        if (sortBy === "created_at") return new Date(b.created_at) - new Date(a.created_at);
-      });
-
-      sorted.forEach(item => {
+      filtered.forEach(item => {
         const div = document.createElement("div");
         div.className = "amulet-item";
 
@@ -136,12 +111,20 @@
         `;
         listContainer.appendChild(div);
       });
-    }
+    });
   </script>
 </head>
 <body>
-  <header>พระหล่อ</header>
+  <nav class="navbar">
+    <ul>
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="list.html">📄 รายการทั้งหมด</a></li>
+      <li><a href="contact.html">📞 ช่องทางติดต่อ</a></li>
+    </ul>
+  </nav>
+
   <div class="container">
+    <h2>รายการพระหล่อ</h2>
     <div id="amulet-list"></div>
   </div>
 </body>
