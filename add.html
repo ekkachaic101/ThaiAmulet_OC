@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>เพิ่มพระเครื่อง</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
+<meta charset="utf-8"/>
+<title>เพิ่มพระเครื่อง</title>
+<link href="style.css" rel="stylesheet"/>
+<style>
     body { font-family: sans-serif; background-color: #fffaf0; }
     .container { max-width: 1000px; margin: auto; padding: 20px; }
     form { background-color: #fff8dc; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -18,7 +19,7 @@
     th { background-color: #f0e68c; }
     img.table-img { width: 80px; height: auto; border-radius: 6px; border: 1px solid #aaa; box-shadow: 0 2px 4px rgba(0,0,0,0.2); object-fit: cover; }
   </style>
-  <script type="module">
+<script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
     const supabase = createClient(
@@ -222,58 +223,66 @@
   </script>
 </head>
 <body>
-  <nav class="navbar">
-    <ul>
-      <li><a href="index.html">หน้าแรก</a></li>
-      <li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
-      <li><a href="list.html">รายการทั้งหมด</a></li>
-      <li><a href="stats.html">สถิติ</a></li>
-      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
-    </ul>
-  </nav>
-  <div style="text-align:right; padding:10px;">👤 <span id="username">กำลังโหลด...</span></div>
-  <div class="container">
-    <h2>เพิ่มพระเครื่อง</h2>
-    <form id="add-form">
-      <label>ชื่อพระ:</label>
-      <input type="text" id="name" required>
-      <label>ราคา:</label>
-      <input type="text" id="price" required>
-      <label>รายละเอียด:</label>
-      <textarea id="description" rows="4"></textarea>
-      <label>ภาพด้านหน้า:</label>
-      <input type="file" id="image1" accept="image/*">
-      <img id="preview1" class="preview">
-      <label>ภาพด้านหลัง:</label>
-      <input type="file" id="image2" accept="image/*">
-      <img id="preview2" class="preview">
-      <label>ภาพด้านข้าง:</label>
-      <input type="file" id="image3" accept="image/*">
-      <img id="preview3" class="preview">
-      <label>ภาพด้านล่าง:</label>
-      <input type="file" id="image4" accept="image/*">
-      <img id="preview4" class="preview">
-      <button type="submit" id="submit-button">บันทึกข้อมูล</button>
-    </form>
+<nav class="navbar">
+<ul>
+<li><a href="index.html">หน้าแรก</a></li>
+<li><a href="add.html">➕ เพิ่มพระเครื่อง</a></li>
+<li><a href="list.html">รายการทั้งหมด</a></li>
+<li><a href="stats.html">สถิติ</a></li>
+<li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+</ul>
+</nav>
+<div style="text-align:right; padding:10px;">👤 <span id="username">กำลังโหลด...</span></div>
+<div class="container">
+<h2>เพิ่มพระเครื่อง</h2>
+<form id="add-form">
+<label>ชื่อพระ:</label>
+<input id="name" required="" type="text"/>
+<label>ราคา:</label>
+<input id="price" required="" type="text"/>
+<label>รายละเอียด:</label><label for="category">ประเภทพระเครื่อง:</label><select id="category" name="category"><option value="">-- ไม่ระบุประเภท --</option><option value="พระสมเด็จ">พระสมเด็จ</option><option value="พระปิดตา">พระปิดตา</option><option value="พระกรุ">พระกรุ</option></select>
+<textarea id="description" rows="4"></textarea>
 
-    <h3>รายการพระเครื่องที่อัปโหลดแล้ว</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>ชื่อพระ</th>
-          <th>ราคา</th>
-          <th>รายละเอียด</th>
-          <th>ด้านหน้า</th>
-          <th>ด้านหลัง</th>
-          <th>ด้านข้าง</th>
-          <th>ด้านล่าง</th>
-          <th>การจัดการ</th>
-        </tr>
-      </thead>
-      <tbody id="amulet-table-body">
-        <!-- ข้อมูลจะถูกเพิ่มโดย JavaScript -->
-      </tbody>
-    </table>
-  </div>
+<label for="category">ประเภทพระเครื่อง:</label>
+<select id="category" name="category">
+  <option value="">-- ไม่ระบุประเภท --</option>
+  <option value="พระสมเด็จ">พระสมเด็จ</option>
+  <option value="พระปิดตา">พระปิดตา</option>
+  <option value="พระกรุ">พระกรุ</option>
+</select>
+
+<label>ภาพด้านหน้า:</label>
+<input accept="image/*" id="image1" type="file"/>
+<img class="preview" id="preview1"/>
+<label>ภาพด้านหลัง:</label>
+<input accept="image/*" id="image2" type="file"/>
+<img class="preview" id="preview2"/>
+<label>ภาพด้านข้าง:</label>
+<input accept="image/*" id="image3" type="file"/>
+<img class="preview" id="preview3"/>
+<label>ภาพด้านล่าง:</label>
+<input accept="image/*" id="image4" type="file"/>
+<img class="preview" id="preview4"/>
+<button id="submit-button" type="submit">บันทึกข้อมูล</button>
+</form>
+<h3>รายการพระเครื่องที่อัปโหลดแล้ว</h3>
+<table>
+<thead>
+<tr>
+<th>ชื่อพระ</th>
+<th>ราคา</th>
+<th>รายละเอียด</th>
+<th>ด้านหน้า</th>
+<th>ด้านหลัง</th>
+<th>ด้านข้าง</th>
+<th>ด้านล่าง</th>
+<th>การจัดการ</th>
+</tr>
+</thead>
+<tbody id="amulet-table-body">
+<!-- ข้อมูลจะถูกเพิ่มโดย JavaScript -->
+</tbody>
+</table>
+</div>
 </body>
 </html>
