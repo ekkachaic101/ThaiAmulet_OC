@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>พระปิดตา</title>
+  <style>
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background-image: url('jpeg.jpg');
+      background-size: cover;
+      background-repeat: repeat;
+      background-attachment: fixed;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: rgba(255, 215, 0, 0.85);
+      padding: 20px;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
+      color: #5c3a00;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .amulet-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+    .amulet-card {
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 2px solid #d4af37;
+      border-radius: 10px;
+      margin: 10px;
+      padding: 15px;
+      width: 250px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .amulet-card img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+    .amulet-card h3 {
+      color: #b8860b;
+      margin: 10px 0 5px;
+    }
+    .amulet-card p {
+      font-size: 0.9em;
+    }
+    .back-link {
+      text-align: center;
+      margin: 20px;
+    }
+    .back-link a {
+      color: #5c3a00;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>พระปิดตา</header>
+  <div class="amulet-container" id="amulet-list"></div>
+  <div class="back-link"><a href="index.html">&larr; กลับหน้าแรก</a></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://srzqmhgdaedfoyakqmpg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
+    );
+
+    async function loadAmulets() {
+      const { data, error } = await supabase
+        .from('amulets')
+        .select('*');
+
+      if (error) {
+        console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', error);
+        return;
+      }
+
+      const filtered = data.filter(item => item.name && item.name.includes('ปิดตา'));
+      const container = document.getElementById('amulet-list');
+      container.innerHTML = '';
+
+      filtered.forEach(item => {
+        const imageUrl = item.image_url1 || 'https://via.placeholder.com/250';
+        container.innerHTML += `
+          <div class="amulet-card">
+            <img src="${imageUrl}" alt="${item.name}" />
+            <h3>${item.name}</h3>
+            <p>${item.description || ''}</p>
+            <a href="detail.html?id=${item.id}">ดูรายละเอียด</a>
+          </div>
+        `;
+      });
+    }
+
+    loadAmulets();
+  </script>
+</body>
+</html>
