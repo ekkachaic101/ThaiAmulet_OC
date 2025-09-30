@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-
 <html lang="th">
-<head><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="รายละเอียดพระเครื่อง เช่น หลวงปู่ พระอาจารย์ ครูบา พระสมเด็จ พระปิดตา พระกรุ พร้อมข้อมูลและภาพประกอบ" name="description"/><meta content="พระเครื่อง, หลวงปู่, พระอาจารย์, ครูบา, พระสมเด็จ, พระปิดตา, พระกรุ" name="keywords"/>
-<meta charset="utf-8"/>
-<title>รายละเอียดพระเครื่อง หลวงปู่ พระอาจารย์ ครูบา พระสมเด็จ พระปิดตา พระกรุ</title>
-<style>
+<head>
+  <meta charset="UTF-8">
+  <title>รายละเอียดพระเครื่อง</title>
+  <style>
     body {
       font-family: 'TH Sarabun New', sans-serif;
       background-image: url('jpeg.jpg');
@@ -128,7 +127,7 @@
       color: #8a6d00;
     }
   </style>
-<script type="module">
+  <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabase = createClient(
@@ -174,8 +173,8 @@
         </div>
         <div class="contact-section">
           <h3>ช่องทางติดต่อ</h3>
-          <p>📞 โทรศัพท์: <a href="tel: "> </a></p>
-          <p>📧 อีเมล: <a href="mail to: "> </a></p>
+          <p>📞 โทรศัพท์: <a href="tel:0812345678">081-234-5678</a></p>
+          <p>📧 อีเมล: <a href="mailto:thaiamulet@email.com">thaiamulet@email.com</a></p>
           <p>💬 LINE ID: @937orilu</p>
           <div class="qr-section">
             <img src="M_gainfriends_2dbarcodes_GW.png" alt="QR Code LINE">
@@ -200,13 +199,21 @@
   </script>
 </head>
 <body>
-<div class="container">
-<p>กำลังโหลดข้อมูลพระเครื่อง...</p>
-</div>
-<!-- Facebook Chat Plugin -->
-<div id="fb-root"></div>
-<script async="" crossorigin="anonymous" defer="" src="https://connect.facebook.net/th_TH/sdk/xfbml.customerchat.js"></script>
-<div attribution="setup_tool" class="fb-customerchat" logged_in_greeting="สวัสดีค่ะ มีอะไรให้ช่วยไหมคะ?" logged_out_greeting="กรุณาเข้าสู่ระบบ Facebook เพื่อแชทกับเรา" page_id="100025791055191" theme_color="#f7d774">
-</div>
+  <div class="container">
+    <p>กำลังโหลดข้อมูลพระเครื่อง...</p>
+  </div>
+
+  <!-- Facebook Chat Plugin -->
+  <div id="fb-root"></div>
+  <script async defer crossorigin="anonymous"
+    src="https://connect.facebook.net/th_TH/sdk/xfbml.customerchat.js"></script>
+
+  <div class="fb-customerchat"
+    attribution="setup_tool"
+    page_id="100025791055191"
+    theme_color="#f7d774"
+    logged_in_greeting="สวัสดีค่ะ มีอะไรให้ช่วยไหมคะ?"
+    logged_out_greeting="กรุณาเข้าสู่ระบบ Facebook เพื่อแชทกับเรา">
+  </div>
 </body>
 </html>
