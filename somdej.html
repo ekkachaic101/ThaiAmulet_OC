@@ -89,11 +89,12 @@
       container.innerHTML = '';
 
       filtered.forEach(item => {
+        const imageUrl = item.image_url ? item.image_url : 'image.png';
         container.innerHTML += `
           <div class="amulet-card">
-            <img src="${item.image_url}" alt="${item.name}" />
+            <img src="${imageUrl}" alt="${item.name}" />
             <h3>${item.name}</h3>
-            <p>${item.description}</p>
+            <p>${item.description || ''}</p>
             <a href="detail.html?id=${item.id}">ดูรายละเอียด</a>
           </div>
         `;
