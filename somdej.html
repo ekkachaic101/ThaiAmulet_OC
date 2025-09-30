@@ -5,106 +5,127 @@
   <title>พระสมเด็จ</title>
   <style>
     body {
-      font-family: 'Sarabun', sans-serif;
+      font-family: sans-serif;
       background-image: url('jpeg.jpg');
-      background-size: cover;
       background-repeat: repeat;
-      background-attachment: fixed;
-      margin: 0;
+      background-size: 400px;
+      background-color: #fffaf0;
+    }
+    .container {
+      max-width: 1400px;
+      margin: auto;
+      padding: 20px;
+    }
+    .navbar ul {
+      list-style: none;
       padding: 0;
-      color: #333;
-    }
-    header {
-      background-color: rgba(255, 215, 0, 0.85);
-      padding: 20px;
-      text-align: center;
-      font-size: 2em;
-      font-weight: bold;
-      color: #5c3a00;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    .amulet-container {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 20px;
+      gap: 15px;
+      background-color: #f0e68c;
+      margin: 0;
+      padding: 10px;
     }
-    .amulet-card {
-      background-color: rgba(255, 255, 255, 0.9);
-      border: 2px solid #d4af37;
-      border-radius: 10px;
-      margin: 10px;
-      padding: 15px;
-      width: 250px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    .amulet-card img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 5px;
-    }
-    .amulet-card h3 {
-      color: #b8860b;
-      margin: 10px 0 5px;
-    }
-    .amulet-card p {
-      font-size: 0.9em;
-    }
-    .back-link {
-      text-align: center;
-      margin: 20px;
-    }
-    .back-link a {
-      color: #5c3a00;
+    .navbar ul li a {
       text-decoration: none;
+      color: #333;
       font-weight: bold;
+    }
+    .navbar ul li a:hover {
+      color: #000;
+    }
+    #amulet-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+    }
+    .amulet-item {
+      border: 1px solid #d4af37;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: #fff8dc;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease;
+      font-size: 14px;
+    }
+    .amulet-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .main-image {
+      width: 100px;
+      height: 100px;
+      margin: 5px auto;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+    .amulet-item h3 {
+      margin: 5px 0;
+      font-size: 16px;
+      color: #b58e00;
+    }
+    .amulet-item p {
+      margin: 3px 0;
     }
   </style>
-</head>
-<body>
-  <header>พระสมเด็จ</header>
-  <div class="amulet-container" id="amulet-list"></div>
-  <div class="back-link"><a href="index.html">&larr; กลับหน้าแรก</a></div>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const supabase = window.supabase.createClient(
+    const supabase = createClient(
       'https://srzqmhgdaedfoyakqmpg.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
     );
 
-    async function loadAmulets() {
+    document.addEventListener("DOMContentLoaded", async () => {
       const { data, error } = await supabase
-        .from('amulets')
-        .select('*');
+        .from("amulets")
+        .select("id, name, price, image_url1, created_at");
 
       if (error) {
-        console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', error);
+        console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", error);
+        alert("ไม่สามารถโหลดข้อมูลได้");
         return;
       }
 
-      const filtered = data.filter(item => item.name && item.name.includes('สมเด็จ'));
-      const container = document.getElementById('amulet-list');
-      container.innerHTML = '';
+      const filtered = data.filter(item => item.name && item.name.includes("สมเด็จ"));
+      const listContainer = document.getElementById("amulet-list");
+      listContainer.innerHTML = "";
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = "<p>ไม่พบรายการพระสมเด็จ</p>";
+        return;
+      }
 
       filtered.forEach(item => {
-        const imageUrl = item.image_filename
-          ? `https://srzqmhgdaedfoyakqmpg.supabase.co/storage/v1/object/public/amulet-images/public/${item.image_filename}`
-          : 'https://via.placeholder.com/250';
+        const div = document.createElement("div");
+        div.className = "amulet-item";
 
-        container.innerHTML += `
-          <div class="amulet-card">
-            <img src="${imageUrl}" alt="${item.name}" />
+        const mainImage = item.image_url1 || "";
+        div.innerHTML = `
+          <a href="detail.html?id=${item.id}">
+            ${mainImage ? `<img src="${mainImage}" class="main-image">` : ""}
             <h3>${item.name}</h3>
-            <p>${item.description || ''}</p>
-            <a href="detail.html?id=${item.id}">ดูรายละเอียด</a>
-          </div>
+            <p><strong>ราคา:</strong> ${item.price}</p>
+          </a>
         `;
+        listContainer.appendChild(div);
       });
-    }
-
-    loadAmulets();
+    });
   </script>
+</head>
+<body>
+  <nav class="navbar">
+    <ul>
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="list.html">📄 รายการทั้งหมด</a></li>
+      <li><a href="contact.html">📞 ช่องทางติดต่อ</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h2>รายการพระสมเด็จ</h2>
+    <div id="amulet-list"></div>
+  </div>
 </body>
 </html>
