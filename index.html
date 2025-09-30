@@ -1,10 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>หน้าแรก - ThaiAmulet_OC</title>
-  <style>
+<meta charset="utf-8"/>
+<title>หน้าแรก - ThaiAmulet_OC</title>
+<style>
     body {
       font-family: sans-serif;
       background-image: url('jpeg.jpg');
@@ -18,12 +18,10 @@
       list-style: none;
       padding: 0;
       display: flex;
-      flex-wrap: wrap;
       gap: 15px;
       background-color: #f0e68c;
       margin: 0;
       padding: 10px;
-      justify-content: center;
     }
     .navbar ul li a {
       text-decoration: none;
@@ -109,32 +107,8 @@
     .footer-menu a:hover {
       background-color: #e6d36c;
     }
-
-    @media (max-width: 768px) {
-      .navbar ul {
-        flex-direction: column;
-        align-items: center;
-      }
-      .amulet-grid {
-        grid-template-columns: 1fr;
-      }
-      .logo-section img {
-        width: 100px;
-        height: 100px;
-      }
-      .logo-section h1 {
-        font-size: 1.5em;
-      }
-      .logo-section p {
-        font-size: 1em;
-      }
-      .footer-menu a {
-        font-size: 14px;
-        padding: 8px 16px;
-      }
-    }
   </style>
-  <script type="module">
+<script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabase = createClient(
@@ -169,30 +143,94 @@
       });
     });
   </script>
+
+<style>
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100%;
+  background: url('jpeg.jpg') repeat;
+  background-size: cover;
+  padding: 20px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+  font-family: 'Sarabun', sans-serif;
+  z-index: 1000;
+}
+
+.sidebar h2 {
+  color: #b8860b;
+  font-size: 22px;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 1px #fff;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #4b3e1d;
+  font-weight: bold;
+  font-size: 16px;
+  display: block;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.sidebar ul li a:hover {
+  background-color: rgba(255, 215, 0, 0.3);
+  transform: scale(1.05);
+  color: #b8860b;
+}
+
+.main-content {
+  margin-left: 260px;
+  padding: 20px;
+}
+</style>
 </head>
 <body>
-  <nav class="navbar">
-    <ul>
-      <li><a href="index.html">หน้าแรก</a></li>
-      <li><a href="list.html">📄 รายการทั้งหมด</a></li>
-      <li><a href="contact.html">📬 ช่องทางติดต่อ</a></li>
-      <li><a href="login.html">🔐 เข้าสู่ระบบ</a></li>
-    </ul>
-  </nav>
+<div class="main-content"><div class="sidebar">
+<h2>หมวดหมู่พระเครื่อง</h2>
+<ul>
+<li><a href="index.html">🏠 หน้าแรก</a></li>
+<li><a href="list.html">📄 รายการทั้งหมด</a></li>
+<li><a href="somdej.html">🟡 พระสมเด็จ</a></li>
+<li><a href="pidta.html">🟤 พระปิดตา</a></li>
+<li><a href="kru.html">🟠 พระกรุ</a></li>
+<li><a href="kring.html">🔵 พระกริ่ง</a></li>
+<li><a href="phralor.html">🟣 พระหล่อ</a></li>
+</ul>
+</div>
 
-  <div class="logo-section">
-    <img src="551398895_24700621249555121_6637924374533059716_n.jpg" alt="ThaiAmulet_OC Logo">
-    <h1>ThaiAmulet_OC</h1>
-    <p>เว็บไซต์รวมภาพและข้อมูลพระเครื่องไทย</p>
-  </div>
-
-  <div class="container">
-    <h2>พระเครื่องล่าสุด</h2>
-    <div id="amulet-grid" class="amulet-grid"></div>
-  </div>
-
-  <div class="footer-menu">
-    <a href="stats.html">📊 สถิติ</a>
-  </div>
-</body>
+<nav class="navbar">
+<ul>
+<li><a href="index.html">หน้าแรก</a></li>
+<li><a href="list.html">📄 รายการทั้งหมด</a></li>
+<li><a href="contact.html">📬 ช่องทางติดต่อ</a></li>
+<li><a href="login.html">🔐 เข้าสู่ระบบ</a></li>
+</ul>
+</nav>
+<div class="logo-section">
+<img alt="ThaiAmulet_OC Logo" src="551398895_24700621249555121_6637924374533059716_n.jpg"/>
+<h1>ThaiAmulet_OC</h1>
+<p>เว็บไซต์รวมภาพและข้อมูลพระเครื่องไทย</p>
+</div>
+<div class="container">
+<h2>พระเครื่องล่าสุด</h2>
+<div class="amulet-grid" id="amulet-grid"></div>
+</div>
+<div class="footer-menu">
+<a href="stats.html">📊 สถิติ</a>
+</div>
+</div></body>
 </html>
