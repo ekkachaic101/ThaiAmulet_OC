@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>หน้าแรก - ThaiAmulet_OC</title>
   <style>
@@ -18,11 +18,12 @@
       list-style: none;
       padding: 0;
       display: flex;
+      flex-wrap: wrap;
       gap: 15px;
       background-color: #f0e68c;
       margin: 0;
       padding: 10px;
-      flex-wrap: wrap;
+      justify-content: center;
     }
     .navbar ul li a {
       text-decoration: none;
@@ -108,66 +109,11 @@
     .footer-menu a:hover {
       background-color: #e6d36c;
     }
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 240px;
-      height: 100%;
-      background: url('jpeg.jpg') repeat;
-      background-size: cover;
-      padding: 20px;
-      box-shadow: 2px 0 8px rgba(0,0,0,0.2);
-      font-family: 'Sarabun', sans-serif;
-      z-index: 1000;
-    }
-    .sidebar h2 {
-      color: #b8860b;
-      font-size: 22px;
-      margin-bottom: 20px;
-      text-shadow: 1px 1px 1px #fff;
-    }
-    .sidebar ul {
-      list-style: none;
-      padding: 0;
-    }
-    .sidebar ul li {
-      margin-bottom: 15px;
-    }
-    .sidebar ul li a {
-      text-decoration: none;
-      color: #4b3e1d;
-      font-weight: bold;
-      font-size: 16px;
-      display: block;
-      padding: 8px 12px;
-      border-radius: 5px;
-      transition: background 0.3s, transform 0.2s;
-    }
-    .sidebar ul li a:hover {
-      background-color: rgba(255, 215, 0, 0.3);
-      transform: scale(1.05);
-      color: #b8860b;
-    }
-    .main-content {
-      margin-left: 260px;
-      padding: 20px;
-    }
+
     @media (max-width: 768px) {
-      .sidebar {
-        position: relative;
-        width: 100%;
-        height: auto;
-        box-shadow: none;
-        padding: 10px;
-      }
-      .main-content {
-        margin-left: 0;
-        padding: 10px;
-      }
       .navbar ul {
         flex-direction: column;
-        gap: 10px;
+        align-items: center;
       }
       .amulet-grid {
         grid-template-columns: 1fr;
@@ -179,33 +125,52 @@
       .logo-section h1 {
         font-size: 1.5em;
       }
-      .sidebar ul li a {
-        font-size: 14px;
-        padding: 6px 10px;
+      .logo-section p {
+        font-size: 1em;
       }
       .footer-menu a {
-        display: inline-block;
-        margin-top: 10px;
         font-size: 14px;
         padding: 8px 16px;
       }
     }
   </style>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabase = createClient(
+      'https://srzqmhgdaedfoyakqmpg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyenFtaGdkYWVkZm95YWtxbXBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MzU0MTUsImV4cCI6MjA3MjMxMTQxNX0.rs0m4ibkOPvWADs7iLdgDxCLAnwS_Ko6PtHtvyugTsQ'
+    );
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const { data, error } = await supabase
+        .from("amulets")
+        .select("id, name, price, image_url1")
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (error) {
+        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
+        return;
+      }
+
+      const grid = document.getElementById("amulet-grid");
+      data.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "amulet-card";
+        card.innerHTML = `
+          <a href="detail.html?id=${item.id}">
+            ${item.image_url1 ? `<img src="${item.image_url1}" alt="${item.name}">` : ""}
+          </a>
+          <h3>${item.name}</h3>
+          <p><strong>ราคา:</strong> ${item.price}</p>
+        `;
+        grid.appendChild(card);
+      });
+    });
+  </script>
 </head>
 <body>
-<div class="main-content">
-  <div class="sidebar">
-    <h2>หมวดหมู่พระเครื่อง</h2>
-    <ul>
-      <li><a href="index.html">🏠 หน้าแรก</a></li>
-      <li><a href="list.html">📄 รายการทั้งหมด</a></li>
-      <li><a href="somdej.html">🟡 พระสมเด็จ</a></li>
-      <li><a href="pidta.html">🟤 พระปิดตา</a></li>
-      <li><a href="kru.html">🟠 พระกรุ</a></li>
-      <li><a href="kring.html">🔵 พระกริ่ง</a></li>
-      <li><a href="phralor.html">🟣 พระหล่อ</a></li>
-    </ul>
-  </div>
   <nav class="navbar">
     <ul>
       <li><a href="index.html">หน้าแรก</a></li>
@@ -214,18 +179,20 @@
       <li><a href="login.html">🔐 เข้าสู่ระบบ</a></li>
     </ul>
   </nav>
+
   <div class="logo-section">
-    <img alt="ThaiAmulet_OC Logo" src="551398895_24700621249555121_6637924374533059716_n.jpg"/>
+    <img src="551398895_24700621249555121_6637924374533059716_n.jpg" alt="ThaiAmulet_OC Logo">
     <h1>ThaiAmulet_OC</h1>
     <p>เว็บไซต์รวมภาพและข้อมูลพระเครื่องไทย</p>
   </div>
+
   <div class="container">
     <h2>พระเครื่องล่าสุด</h2>
-    <div class="amulet-grid" id="amulet-grid"></div>
+    <div id="amulet-grid" class="amulet-grid"></div>
   </div>
+
   <div class="footer-menu">
     <a href="stats.html">📊 สถิติ</a>
   </div>
-</div>
 </body>
 </html>
