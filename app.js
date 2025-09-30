@@ -4,7 +4,7 @@ document.getElementById("add-form").addEventListener("submit", async (e) => {
   const name = document.getElementById("name").value.trim()
   const price = document.getElementById("price").value.trim()
   const description = document.getElementById("description").value.trim()
-const category = document.getElementById("category").value.trim()
+const category = document.getElementById("category").value.trim();
 
   const files = [
     document.getElementById("image1").files[0],
@@ -32,7 +32,6 @@ const category = document.getElementById("category").value.trim()
         name,
         price,
         description,
-category,
         image_url1: image_urls[0],
         image_url2: image_urls[1],
         image_url3: image_urls[2],
